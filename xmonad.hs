@@ -15,6 +15,7 @@ main = do
   xmproc <- spawnPipe "xmobar"
   xmonad $ defaultConfig
     { terminal = "urxvt"
+    , borderWidth = 0
     , workspaces = myWorkspaces
     , manageHook = manageDocks <+> manageHook defaultConfig
     , layoutHook = avoidStruts $ (myTall ||| Mirror myTall ||| Full)
