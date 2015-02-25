@@ -1,13 +1,15 @@
-import XMonad
+import XMonad hiding ( (|||) )
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import qualified XMonad.StackSet as W
+import XMonad.Layout.LayoutCombinators
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeysP)
 import System.IO
 
 myMask = modMask defaultConfig
 myWorkspaces = map (\x -> [x]) ['a'..'z']
+myTall = Tall 1 (3/100) (5/7)
 
 main = do
   xmproc <- spawnPipe "xmobar"
@@ -15,7 +17,7 @@ main = do
     { terminal = "urxvt"
     , workspaces = myWorkspaces
     , manageHook = manageDocks <+> manageHook defaultConfig
-    , layoutHook = avoidStruts $ layoutHook defaultConfig
+    , layoutHook = avoidStruts $ (myTall ||| Mirror myTall ||| Full)
     , logHook = dynamicLogWithPP xmobarPP
                   { ppOutput = hPutStrLn xmproc
                   , ppTitle = xmobarColor "green" "" . shorten 50
