@@ -30,6 +30,9 @@ main = do
       | tag <- myWorkspaces
       , (otherModMasks, action) <- [ ("", windows . W.greedyView)
                                    , ("S-", windows . W.shift)]
+    ] ++
+    [ ("M-v " ++ key, sendMessage $ JumpToLayout layout)
+      | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall")]
     ]
     )
 
