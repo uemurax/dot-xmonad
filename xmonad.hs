@@ -29,7 +29,8 @@ main = do
                   { ppOutput = hPutStrLn xmproc
                   , ppTitle = xmobarColor "green" "" . shorten 50
                   }
-    , startupHook = spawn "xscreensaver -no-splash"
+    , startupHook = spawn $ "xscreensaver -no-splash"
+      ++ "& unclutter -idle 1 -root"
     } `additionalKeysP` (
     [ ("M-S-z" , spawn "xscreensaver-command -lock")
     ] ++
