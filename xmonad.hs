@@ -1,3 +1,10 @@
+import XMonad
+import XMonad.Config.Desktop
+
+main = do
+  xmonad $ desktopConfig
+
+{-
 import XMonad hiding ( (|||) )
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
@@ -46,4 +53,5 @@ main = do
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ]
     )
+-}
 
