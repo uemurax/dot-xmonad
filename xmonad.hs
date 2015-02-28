@@ -1,10 +1,3 @@
-import XMonad
-import XMonad.Config.Kde
-
-main = do
-  xmonad $ kdeConfig
-
-{-
 import XMonad hiding ( (|||) )
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
@@ -14,10 +7,11 @@ import XMonad.Prompt
 import XMonad.Prompt.Window
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeysP)
+import XMonad.Config.Kde
 import System.IO
 import Data.List
 
-myMask = modMask defaultConfig
+myMask = modMask kdeConfig
 myWorkspaces = map (\x -> [x]) ['a'..'z']
 myTall = Tall 1 (3/100) (5/7)
 myXPConfig = defaultXPConfig
@@ -26,11 +20,11 @@ myXPConfig = defaultXPConfig
 
 main = do
   xmproc <- spawnPipe "xmobar"
-  xmonad $ defaultConfig
+  xmonad $ kdeConfig
     { terminal = "urxvt"
     , borderWidth = 0
     , workspaces = myWorkspaces
-    , manageHook = manageDocks <+> manageHook defaultConfig
+    , manageHook = manageDocks <+> manageHook kdeConfig
     , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full)
     , logHook = dynamicLogWithPP xmobarPP
                   { ppOutput = hPutStrLn xmproc
@@ -53,5 +47,4 @@ main = do
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ]
     )
--}
 
