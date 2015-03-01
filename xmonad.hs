@@ -31,6 +31,8 @@ main = do
                   }
     , startupHook = spawn $ "xscreensaver -no-splash"
       ++ "& unclutter -idle 1 -root"
+    , focusFollowsMouse = False
+    , clickJustFocuses = True
     } `additionalKeysP` (
     [ ("M-S-z" , spawn "xscreensaver-command -lock")
     ] ++
