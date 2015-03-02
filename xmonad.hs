@@ -41,10 +41,10 @@ main = do
       , (otherModMasks, action) <- [ ("", windows . W.greedyView)
                                    , ("S-", windows . W.shift)]
     ] ++
-    [ ("M-v " ++ key, sendMessage $ JumpToLayout layout)
+    [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
       | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall")]
     ] ++
-    [ ("M-: " ++ key, action)
+    [ ("M-p " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ]
     )
