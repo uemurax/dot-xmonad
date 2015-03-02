@@ -30,7 +30,7 @@ main = do
                   , ppTitle = xmobarColor "green" "" . shorten 50
                   }
     , startupHook = spawn $ "xscreensaver -no-splash"
-      ++ "& unclutter -idle 1 -root"
+      ++ "& unclutter -idle 1 -jitter 100 -root"
     , focusFollowsMouse = False
     , clickJustFocuses = True
     } `additionalKeysP` (
