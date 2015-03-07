@@ -9,6 +9,7 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeysP)
 import System.IO
 import Data.List
+import XMonad.Hints
 
 myMask = modMask defaultConfig
 myWorkspaces = map (\x -> [x]) ['a'..'z']
@@ -46,6 +47,8 @@ main = do
     ] ++
     [ ("M-p " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
+    ] ++
+    [ ("M-f", drawInFocusedWindowX "A")
     ]
     )
 
