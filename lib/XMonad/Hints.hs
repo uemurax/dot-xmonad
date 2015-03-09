@@ -1,10 +1,9 @@
 module XMonad.Hints
-( hints
+( runHints
 ) where
 
 import XMonad hiding (initColor)
 import qualified XMonad.StackSet as W
-import Control.Concurrent (threadDelay)
 
 initColor :: Display -> String -> IO Pixel
 initColor dpy color = do
@@ -35,7 +34,7 @@ createPanel dpy win = do
   let dflt = defaultScreen dpy
       border = blackPixel dpy dflt
       background = whitePixel dpy dflt
-  pnl <- createSimpleWindow dpy win 0 0 10 12 1 border background
+  pnl <- createSimpleWindow dpy win 0 0 10 12 0 border background
   return pnl
 
 drawPanel :: Display -> Window -> String -> IO ()
@@ -71,18 +70,43 @@ mapPanels dpy (p:ps) = do
   mapWindow dpy p
   mapPanels dpy ps
 
-showPanels :: Display -> [(String, Window)] -> IO ()
-showPanels dpy ws = do
+waitKey :: Display -> IO String
+waitKey dpy = do
+  allocaXEvent $ keyEventHandler dpy
+
+keyEventHandler :: Display -> XEventPtr -> IO String
+keyEventHandler dpy e = do
+  nextEvent dpy e
+  tp <- get_EventType e
+  if tp == keyPress then do
+    (_, k) <- lookupString $ asKeyEvent e
+    return k
+  else keyEventHandler dpy e
+
+followHint :: Display -> [(String, Window)] -> IO (Maybe Window)
+followHint dpy ws = do
   let (strs, wins) = (map fst ws, map snd ws)
   ps <- createPanels dpy wins
   mapPanels dpy ps
   drawPanels dpy $ zip strs ps
+  rootw <- rootWindow dpy (defaultScreen dpy)
+  dammy <- createSimpleWindow dpy rootw 0 0 1 1 0 0 0
+  mapWindow dpy dammy
+  selectInput dpy dammy keyPressMask
+  setInputFocus dpy dammy revertToPointerRoot 0
   sync dpy False
-  threadDelay (5 * 1000000)
+  key <- waitKey dpy
+  destroyWindow dpy dammy
   destroyPanels dpy ps
+  return $ lookup key ws
 
-hints :: [String] -> X ()
-hints strs = withDisplay (\dpy ->
-  withWindowSet (\stk ->
-    io . showPanels dpy . zip strs . currentWindows $ stk))
+runHints :: [String] -> X ()
+runHints strs = withDisplay $ \dpy ->
+  withWindowSet $ \stk ->
+    withFocused $ \orgWin -> do
+      newWin <- io . followHint dpy . zip strs . currentWindows $ stk
+      case newWin of
+        Nothing -> focus orgWin
+        Just win -> focus win
+      refresh
 
