@@ -17,6 +17,7 @@ myTall = Tall 1 (3/100) (5/7)
 myXPConfig = defaultXPConfig
   { searchPredicate = isInfixOf
   }
+hintChar = map (\x -> [x]) ['A'..'Z']
 
 main = do
   xmproc <- spawnPipe "xmobar"
@@ -48,7 +49,7 @@ main = do
     [ ("M-p " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
-    [ ("M-f", hints0)
+    [ ("M-f", hints hintChar)
     ]
     )
 
