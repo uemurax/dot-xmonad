@@ -1,50 +1,53 @@
 module XMonad.Hints
-( drawInFocusedWindowX
+( hints0
 ) where
 
 import XMonad hiding (initColor)
 import qualified XMonad.StackSet as W
+import Control.Concurrent (threadDelay)
 
-drawInFocusedWindowX :: String -> X ()
-drawInFocusedWindowX str = withDisplay (\dpy ->
-  withFocused (\win ->
-    io $ drawInWin dpy win str))
+currentWorkspace :: W.StackSet i l a s sd -> W.Workspace i l a
+currentWorkspace = W.workspace . W.current
 
-drawInWin :: Display -> Window -> String -> IO ()
-drawInWin dpy win str = do
-  bgcolor <- initColor dpy "green"
-  fgcolor <- initColor dpy "blue"
-  gc <- createGC dpy win
-  fontStruc <- loadQueryFont dpy "-misc-fixed-*-*-*-*-32-*-*-*-*-*-*-*"
-  --setForeground dpy gc bgcolor
-  --fillRectangle dpy win gc 0 0 200 100
-  --setForeground dpy gc fgcolor
-  --fillRectangle dpy win gc 2 2 196 196
-  printString dpy win gc fontStruc str
-  freeGC dpy gc
-  freeFont dpy fontStruc
+currentWindows :: W.StackSet i l a s sd -> [a]
+currentWindows = W.integrate' . W.stack . currentWorkspace
 
-printString :: Display
-  -> Drawable
-  -> GC
-  -> FontStruct
-  -> String
-  -> IO ()
-printString dpy d gc fontst str = do
-  let strLen = textWidth fontst str
-      (_, asc, _, _) = textExtents fontst str
-      valign = (5 + fromIntegral asc) `div` 2
-      remWidth = 10
-      offset = remWidth `div` 2
-  fgcolor <- initColor dpy "black"
-  bgcolor <- initColor dpy "yellow"
-  setForeground dpy gc fgcolor
-  setBackground dpy gc bgcolor
-  drawImageString dpy d gc offset valign str
+createPanel :: Display -> Window -> IO Window
+createPanel dpy win = do
+  let dflt = defaultScreen dpy
+      border = blackPixel dpy dflt
+      background = whitePixel dpy dflt
+  createSimpleWindow dpy win 0 0 30 30 1 border background
 
-initColor :: Display -> String -> IO Pixel
-initColor dpy color = do
-  let colormap = defaultColormap dpy (defaultScreen dpy)
-  (apros, real) <- allocNamedColor dpy colormap color
-  return $ color_pixel apros
+createPanels :: Display -> [Window] -> IO [Window]
+createPanels dpy [] = return []
+createPanels dpy (w:ws) = do
+  p <- createPanel dpy w
+  ps <- createPanels dpy ws
+  return (p:ps)
+
+destroyPanels :: Display -> [Window] -> IO ()
+destroyPanels dpy [] = return ()
+destroyPanels dpy (p:ps) = do
+  destroyWindow dpy p
+  destroyPanels dpy ps
+
+mapPanels :: Display -> [Window] -> IO ()
+mapPanels dpy [] = return ()
+mapPanels dpy (p:ps) = do
+  mapWindow dpy p
+  mapPanels dpy ps
+
+showPanels :: Display -> [Window] -> IO ()
+showPanels dpy ws = do
+  ps <- createPanels dpy ws
+  mapPanels dpy ps
+  sync dpy False
+  threadDelay (5 * 1000000)
+  destroyPanels dpy ps
+
+hints0 :: X ()
+hints0 = withDisplay (\dpy ->
+  withWindowSet (\stk ->
+    io $ showPanels dpy (currentWindows stk)))
 

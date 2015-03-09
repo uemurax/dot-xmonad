@@ -48,7 +48,7 @@ main = do
     [ ("M-p " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
-    [ ("M-f", drawInFocusedWindowX "A")
+    [ ("M-f", hints0)
     ]
     )
 
