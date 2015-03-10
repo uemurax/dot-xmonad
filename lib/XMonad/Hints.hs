@@ -1,9 +1,25 @@
 module XMonad.Hints
 ( runHints
+, defaultHConfig
 ) where
 
 import XMonad hiding (initColor)
 import qualified XMonad.StackSet as W
+
+data HintConfig = HintConfig
+  { hintChar :: [String]
+  , font :: String
+  , fgColor :: String
+  , bgColor :: String
+  }
+
+defaultHConfig :: HintConfig
+defaultHConfig = HintConfig
+  { hintChar = map (\x -> [x]) "jfnvuthgybkdmciroelspwaqz"
+  , font = "fixed"
+  , fgColor = "#101000"
+  , bgColor = "#ffdfff"
+  }
 
 initColor :: Display -> String -> IO Pixel
 initColor dpy color = do
@@ -11,14 +27,19 @@ initColor dpy color = do
   (apros, real) <- allocNamedColor dpy colormap color
   return $ color_pixel apros
 
-printString :: Display -> Drawable -> GC -> FontStruct -> String -> IO ()
-printString dpy d gc fontst str = do
+printString :: Display
+  -> Drawable
+  -> GC
+  -> FontStruct
+  -> Pixel                -- fgColor
+  -> Pixel                -- bgColor
+  -> String               -- text
+  -> IO ()
+printString dpy d gc fontst fgcolor bgcolor str = do
   let strLen = textWidth fontst str
-      valign = 10
+      valign = strLen * 2
       remWidth = 20 - strLen
       offset = remWidth `div` 2
-  fgcolor <- initColor dpy "black"
-  bgcolor <- initColor dpy "white"
   setForeground dpy gc fgcolor
   setBackground dpy gc bgcolor
   drawImageString dpy d gc offset valign str
@@ -29,33 +50,51 @@ currentWorkspace = W.workspace . W.current
 currentWindows :: W.StackSet i l a s sd -> [a]
 currentWindows = W.integrate' . W.stack . currentWorkspace
 
-createPanel :: Display -> Window -> IO Window
-createPanel dpy win = do
+createPanel :: Display
+  -> FontStruct
+  -> Pixel             -- bgColor
+  -> Window
+  -> IO Window
+createPanel dpy fnt background win = do
   let dflt = defaultScreen dpy
-      border = blackPixel dpy dflt
-      background = whitePixel dpy dflt
-  pnl <- createSimpleWindow dpy win 0 0 10 12 0 border background
+      strLen = textWidth fnt "a"
+      height = fromIntegral strLen * 3
+      width = fromIntegral strLen * 4
+  pnl <- createSimpleWindow dpy win 0 0 width height 0 0 background
   return pnl
 
-drawPanel :: Display -> Window -> String -> IO ()
-drawPanel dpy pnl str = do
+drawPanel :: Display
+  -> Window
+  -> FontStruct
+  -> Pixel              -- fgColor
+  -> Pixel              -- bgColor
+  -> String             -- text
+  -> IO ()
+drawPanel dpy pnl fontStruc fg bg str = do
   gc <- createGC dpy pnl
-  fontStruc <- loadQueryFont dpy "-misc-fixed-*-*-*-*-24-*-*-*-*-*-*-*"
-  printString dpy pnl gc fontStruc str
+  printString dpy pnl gc fontStruc fg bg str
   freeGC dpy gc
-  freeFont dpy fontStruc
 
-drawPanels :: Display -> [(String, Window)] -> IO ()
-drawPanels dpy [] = return ()
-drawPanels dpy ((s, p):ps) = do
-  drawPanel dpy p s
-  drawPanels dpy ps
+drawPanels :: Display
+  -> FontStruct
+  -> Pixel             -- fgColor
+  -> Pixel             -- bgColor
+  -> [(String, Window)]
+  -> IO ()
+drawPanels dpy fnt fg bg [] = return ()
+drawPanels dpy fnt fg bg ((s, p):ps) = do
+  drawPanel dpy p fnt fg bg s
+  drawPanels dpy fnt fg bg ps
 
-createPanels :: Display -> [Window] -> IO [Window]
-createPanels dpy [] = return []
-createPanels dpy (w:ws) = do
-  p <- createPanel dpy w
-  ps <- createPanels dpy ws
+createPanels :: Display
+  -> FontStruct
+  -> Pixel             -- bgColor
+  -> [Window]
+  -> IO [Window]
+createPanels dpy fnt bg [] = return []
+createPanels dpy fnt bg (w:ws) = do
+  p <- createPanel dpy fnt bg w
+  ps <- createPanels dpy fnt bg ws
   return (p:ps)
 
 destroyPanels :: Display -> [Window] -> IO ()
@@ -83,12 +122,17 @@ keyEventHandler dpy e = do
     return k
   else keyEventHandler dpy e
 
-followHint :: Display -> [(String, Window)] -> IO (Maybe Window)
-followHint dpy ws = do
+followHint :: Display
+  -> FontStruct
+  -> Pixel               -- fgColor
+  -> Pixel               -- bgColor
+  -> [(String, Window)]
+  -> IO (Maybe Window)
+followHint dpy fnt fg bg ws = do
   let (strs, wins) = (map fst ws, map snd ws)
-  ps <- createPanels dpy wins
+  ps <- createPanels dpy fnt bg wins
   mapPanels dpy ps
-  drawPanels dpy $ zip strs ps
+  drawPanels dpy fnt fg bg $ zip strs ps
   rootw <- rootWindow dpy (defaultScreen dpy)
   dammy <- createSimpleWindow dpy rootw 0 0 1 1 0 0 0
   mapWindow dpy dammy
@@ -100,13 +144,18 @@ followHint dpy ws = do
   destroyPanels dpy ps
   return $ lookup key ws
 
-runHints :: (Window -> X ()) ->[String] -> X ()
-runHints action strs = withDisplay $ \dpy ->
+runHints :: HintConfig -> (Window -> X ()) -> X ()
+runHints config action = withDisplay $ \dpy ->
   withWindowSet $ \stk ->
     withFocused $ \orgWin -> do
-      newWin <- io . followHint dpy . zip strs . currentWindows $ stk
+      let strs = hintChar config
+      fnt <- io . loadQueryFont dpy $ font config
+      fg <- io . initColor dpy $ fgColor config
+      bg <- io . initColor dpy $ bgColor config
+      newWin <- io . followHint dpy fnt fg bg . zip strs . currentWindows $ stk
       case newWin of
         Nothing -> focus orgWin
         Just win -> action win
       refresh
+      io $ freeFont dpy fnt
 

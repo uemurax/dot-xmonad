@@ -17,7 +17,7 @@ myTall = Tall 1 (3/100) (5/7)
 myXPConfig = defaultXPConfig
   { searchPredicate = isInfixOf
   }
-hintChar = map (\x -> [x]) "jfnvuthgybkdmciroelspwaqz"
+myHConfig = defaultHConfig
 
 -- $Hint functions
 swapMasterWith :: (Eq s, Eq a, Eq i) =>
@@ -82,8 +82,8 @@ main = do
     [ ("M-p " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
-    [ ("M-f", runHints focus hintChar) ] ++
-    [ ("M-; " ++ key, runHints action hintChar)
+    [ ("M-f", runHints myHConfig focus) ] ++
+    [ ("M-; " ++ key, runHints myHConfig action)
     | (key, action) <- [ ("f", focus), ("c", killWindow)
         , ("m", windows . swapMasterWith), ("s", windows . swapWith) ] ++
         [ ("u " ++ otherModMasks ++ tag, action tag)
