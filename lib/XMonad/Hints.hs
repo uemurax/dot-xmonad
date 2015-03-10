@@ -100,13 +100,13 @@ followHint dpy ws = do
   destroyPanels dpy ps
   return $ lookup key ws
 
-runHints :: [String] -> X ()
-runHints strs = withDisplay $ \dpy ->
+runHints :: (Window -> X ()) ->[String] -> X ()
+runHints action strs = withDisplay $ \dpy ->
   withWindowSet $ \stk ->
     withFocused $ \orgWin -> do
       newWin <- io . followHint dpy . zip strs . currentWindows $ stk
       case newWin of
         Nothing -> focus orgWin
-        Just win -> focus win
+        Just win -> action win
       refresh
 

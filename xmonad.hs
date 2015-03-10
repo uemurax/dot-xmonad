@@ -17,7 +17,12 @@ myTall = Tall 1 (3/100) (5/7)
 myXPConfig = defaultXPConfig
   { searchPredicate = isInfixOf
   }
-hintChar = map (\x -> [x]) ['a'..'z']
+hintChar = map (\x -> [x]) "jfnvuthgybkdmciroelspwaqz"
+
+-- Hint functions
+swapMasterWith :: (Eq s, Eq a, Eq i) =>
+  a -> W.StackSet i l a s sd -> W.StackSet i l a s sd
+swapMasterWith a = W.swapMaster . W.focusWindow a
 
 main = do
   xmproc <- spawnPipe "xmobar"
@@ -49,7 +54,14 @@ main = do
     [ ("M-p " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
-    [ ("M-f", runHints hintChar)
+    [ ("M-f", runHints focus hintChar) ] ++
+    [ ("M-; " ++ key, runHints action hintChar)
+    | (key, action) <- [ ("f", focus), ("c", killWindow), ("m", windows . swapMasterWith) ] ++
+        [ ("u " ++ otherModMasks ++ tag, action tag)
+        | tag <- myWorkspaces
+        , (otherModMasks, action) <- [ ("S-", (\t -> windows . W.shiftWin t))
+                                     , ("", (\t a -> windows $ W.greedyView t . W.shiftWin t a))]
+        ]
     ]
     )
 
