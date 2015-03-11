@@ -7,6 +7,7 @@ import XMonad.Prompt
 import XMonad.Prompt.Window
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeysP)
+import XMonad.Actions.CycleWS
 import System.IO
 import Data.List
 import XMonad.Hints
@@ -79,7 +80,7 @@ main = do
     [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
       | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall")]
     ] ++
-    [ ("M-p " ++ key, action)
+    [ ("M-: " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
     [ ("M-f", runHints myHConfig focus) ] ++
@@ -91,6 +92,9 @@ main = do
         , (otherModMasks, action) <- [ ("S-", (\t -> windows . W.shiftWin t))
                                      , ("", (\t a -> windows $ W.greedyView t . W.shiftWin t a))]
         ]
+    ] ++
+    [ ("M-n", nextWS), ("M-p", prevWS)
+    , ("M-S-n", shiftToNext), ("M-S-p", shiftToPrev)
     ]
     )
 
