@@ -1,5 +1,5 @@
 import XMonad hiding ( (|||), defaultConfig )
-import XMonad.Config.Desktop
+import XMonad.Config.Xfce
 import XMonad.Hooks.ManageDocks
 import qualified XMonad.StackSet as W
 import XMonad.Layout.LayoutCombinators
@@ -12,7 +12,7 @@ import System.IO
 import Data.List
 import XMonad.Hints
 
-defaultConfig = desktopConfig
+defaultConfig = xfceConfig
 myMask = modMask defaultConfig
 myWorkspaces = map (\x -> [x]) ['a'..'z']
 myTall = Tall 1 (3/100) (5/7)
