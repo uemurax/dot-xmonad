@@ -1,6 +1,7 @@
 import XMonad hiding ( (|||) )
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.FadeWindows
 import qualified XMonad.StackSet as W
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Circle
@@ -20,6 +21,9 @@ myXPConfig = defaultXPConfig
   { searchPredicate = isInfixOf
   }
 myHConfig = defaultHConfig
+myFadeHook = composeAll
+  [ isUnfocused --> transparency 0.2
+  ]
 
 -- $Hint functions
 swapMasterWith :: (Eq s, Eq a, Eq i) =>
@@ -62,12 +66,16 @@ main = do
     , workspaces = myWorkspaces
     , manageHook = manageDocks <+> manageHook defaultConfig
     , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| Circle)
-    , logHook = dynamicLogWithPP xmobarPP
-                  { ppOutput = hPutStrLn xmproc
-                  , ppTitle = xmobarColor "green" "" . shorten 50
-                  }
+    , logHook = do
+        fadeWindowsLogHook myFadeHook
+        dynamicLogWithPP xmobarPP
+          { ppOutput = hPutStrLn xmproc
+          , ppTitle = xmobarColor "green" "" . shorten 50
+          }
+    , handleEventHook = fadeWindowsEventHook
     , startupHook = spawn $ "xscreensaver -no-splash"
       ++ "& unclutter -idle 1 -jitter 100 -root"
+      ++ "& xcompmgr"
     , focusFollowsMouse = False
     , clickJustFocuses = True
     } `additionalKeysP` (
