@@ -76,6 +76,7 @@ main = do
     , startupHook = spawn $ "xscreensaver -no-splash"
       ++ "& unclutter -idle 1 -jitter 100 -root"
       ++ "& xcompmgr"
+      ++ "& feh --bg-scale ~/Pictures/desktop-background"
     , focusFollowsMouse = False
     , clickJustFocuses = True
     } `additionalKeysP` (
