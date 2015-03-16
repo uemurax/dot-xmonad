@@ -96,6 +96,12 @@ drawPanels dpy fnt fg bg ((s, p):ps) = do
   drawPanel dpy p fnt fg bg s
   drawPanels dpy fnt fg bg ps
 
+raiseWindows :: Display -> [Window] -> IO ()
+raiseWindows dpy [] = return ()
+raiseWindows dpy (w:ws) = do
+  raiseWindow dpy w
+  raiseWindows dpy ws
+
 createPanels :: Display
   -> FontStruct
   -> Int               -- borderWidth
@@ -144,6 +150,7 @@ followHint :: Display
   -> IO (Maybe Window)
 followHint dpy fnt bdw bdc fg bg ws = do
   let (strs, wins) = (map fst ws, map snd ws)
+  raiseWindows dpy wins
   ps <- createPanels dpy fnt bdw bdc bg wins
   mapPanels dpy ps
   drawPanels dpy fnt fg bg $ zip strs ps
