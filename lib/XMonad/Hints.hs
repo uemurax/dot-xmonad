@@ -8,17 +8,21 @@ import qualified XMonad.StackSet as W
 
 data HintConfig = HintConfig
   { hintChar :: [String]
-  , font :: String
-  , fgColor :: String
-  , bgColor :: String
+  , hintFont :: String
+  , hintFgColor :: String
+  , hintBgColor :: String
+  , hintBorderWidth :: Int
+  , hintBorderColor :: String
   }
 
 defaultHConfig :: HintConfig
 defaultHConfig = HintConfig
   { hintChar = map (\x -> [x]) "jfnvuthgybkdmciroelspwaqz"
-  , font = "fixed"
-  , fgColor = "#101000"
-  , bgColor = "#ffdfff"
+  , hintFont = "fixed"
+  , hintFgColor = "#000000"
+  , hintBgColor = "#ffff00"
+  , hintBorderWidth = 1
+  , hintBorderColor = "#101010"
   }
 
 initColor :: Display -> String -> IO Pixel
@@ -38,8 +42,7 @@ printString :: Display
 printString dpy d gc fontst fgcolor bgcolor str = do
   let strLen = textWidth fontst str
       valign = strLen * 2
-      remWidth = 20 - strLen
-      offset = remWidth `div` 2
+      offset = strLen
   setForeground dpy gc fgcolor
   setBackground dpy gc bgcolor
   drawImageString dpy d gc offset valign str
@@ -52,15 +55,22 @@ currentWindows = W.integrate' . W.stack . currentWorkspace
 
 createPanel :: Display
   -> FontStruct
+  -> Int               -- borderWidth
+  -> Pixel             -- borderColor
   -> Pixel             -- bgColor
   -> Window
   -> IO Window
-createPanel dpy fnt background win = do
+createPanel dpy fnt bdw bdc background win = do
   let dflt = defaultScreen dpy
       strLen = textWidth fnt "a"
       height = fromIntegral strLen * 3
-      width = fromIntegral strLen * 4
-  pnl <- createSimpleWindow dpy win 0 0 width height 0 0 background
+      width = fromIntegral strLen * 3
+  (rootw, x, y, w, h, b, d) <- getGeometry dpy win
+  let dx = (w - width) `div` 2
+      dy = (h - height) `div` 2
+      x' = x + fromIntegral dx
+      y' = y + fromIntegral dy
+  pnl <- createSimpleWindow dpy rootw x' y' width height (fromIntegral bdw) bdc background
   return pnl
 
 drawPanel :: Display
@@ -86,15 +96,23 @@ drawPanels dpy fnt fg bg ((s, p):ps) = do
   drawPanel dpy p fnt fg bg s
   drawPanels dpy fnt fg bg ps
 
+raiseWindows :: Display -> [Window] -> IO ()
+raiseWindows dpy [] = return ()
+raiseWindows dpy (w:ws) = do
+  raiseWindow dpy w
+  raiseWindows dpy ws
+
 createPanels :: Display
   -> FontStruct
+  -> Int               -- borderWidth
+  -> Pixel             -- borderColor
   -> Pixel             -- bgColor
   -> [Window]
   -> IO [Window]
-createPanels dpy fnt bg [] = return []
-createPanels dpy fnt bg (w:ws) = do
-  p <- createPanel dpy fnt bg w
-  ps <- createPanels dpy fnt bg ws
+createPanels dpy fnt bdw bdc bg [] = return []
+createPanels dpy fnt bdw bdc bg (w:ws) = do
+  p <- createPanel dpy fnt bdw bdc bg w
+  ps <- createPanels dpy fnt bdw bdc bg ws
   return (p:ps)
 
 destroyPanels :: Display -> [Window] -> IO ()
@@ -124,13 +142,16 @@ keyEventHandler dpy e = do
 
 followHint :: Display
   -> FontStruct
+  -> Int                 -- borderWidth
+  -> Pixel               -- borderColor
   -> Pixel               -- fgColor
   -> Pixel               -- bgColor
   -> [(String, Window)]
   -> IO (Maybe Window)
-followHint dpy fnt fg bg ws = do
+followHint dpy fnt bdw bdc fg bg ws = do
   let (strs, wins) = (map fst ws, map snd ws)
-  ps <- createPanels dpy fnt bg wins
+  raiseWindows dpy wins
+  ps <- createPanels dpy fnt bdw bdc bg wins
   mapPanels dpy ps
   drawPanels dpy fnt fg bg $ zip strs ps
   rootw <- rootWindow dpy (defaultScreen dpy)
@@ -149,10 +170,12 @@ runHints config action = withDisplay $ \dpy ->
   withWindowSet $ \stk ->
     withFocused $ \orgWin -> do
       let strs = hintChar config
-      fnt <- io . loadQueryFont dpy $ font config
-      fg <- io . initColor dpy $ fgColor config
-      bg <- io . initColor dpy $ bgColor config
-      newWin <- io . followHint dpy fnt fg bg . zip strs . currentWindows $ stk
+          bdw = hintBorderWidth config
+      fnt <- io . loadQueryFont dpy $ hintFont config
+      bdc <- io . initColor dpy $ hintBorderColor config
+      fg <- io . initColor dpy $ hintFgColor config
+      bg <- io . initColor dpy $ hintBgColor config
+      newWin <- io . followHint dpy fnt bdw bdc fg bg . zip strs . currentWindows $ stk
       case newWin of
         Nothing -> focus orgWin
         Just win -> action win

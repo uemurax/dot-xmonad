@@ -3,6 +3,7 @@ import XMonad.Config.Xfce
 import XMonad.Hooks.ManageDocks
 import qualified XMonad.StackSet as W
 import XMonad.Layout.LayoutCombinators
+import XMonad.Layout.Circle
 import XMonad.Prompt
 import XMonad.Prompt.Window
 import XMonad.Util.Run(spawnPipe)
@@ -60,7 +61,7 @@ main = do
     , borderWidth = 0
     , workspaces = myWorkspaces
     , manageHook = manageDocks <+> manageHook defaultConfig
-    , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full)
+    , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| Circle)
     , startupHook = spawn $ "xscreensaver -no-splash"
       ++ "& unclutter -idle 1 -jitter 100 -root"
     , focusFollowsMouse = False
@@ -74,7 +75,7 @@ main = do
                                    , ("S-", windows . W.shift)]
     ] ++
     [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
-      | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall")]
+      | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "Circle")]
     ] ++
     [ ("M-: " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
