@@ -60,7 +60,12 @@ createPanel dpy fnt background win = do
       strLen = textWidth fnt "a"
       height = fromIntegral strLen * 3
       width = fromIntegral strLen * 4
-  pnl <- createSimpleWindow dpy win 0 0 width height 0 0 background
+  (rootw, x, y, w, h, b, d) <- getGeometry dpy win
+  let dx = (w - width) `div` 2
+      dy = (h - height) `div` 2
+      x' = x + fromIntegral dx
+      y' = y + fromIntegral dy
+  pnl <- createSimpleWindow dpy rootw x' y' width height 0 0 background
   return pnl
 
 drawPanel :: Display
