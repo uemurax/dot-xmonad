@@ -57,6 +57,18 @@ findZ a (x:xs, ys) =
   if a == x then Just (xs, ys)
   else findZ a (xs, x:ys)
 
+-- | float and sink a window
+floatWindow :: Window -> X ()
+floatWindow w = do
+  float w
+  focus w
+
+sinkWindow :: Window -> X ()
+sinkWindow w = do
+  windows $ W.sink w
+  focus w
+
+
 
 main = do
   xmproc <- spawnPipe "xmobar"
@@ -96,7 +108,9 @@ main = do
     [ ("M-f", runHints myHConfig focus) ] ++
     [ ("M-; " ++ key, runHints myHConfig action)
     | (key, action) <- [ ("f", focus), ("c", killWindow)
-        , ("m", windows . swapMasterWith), ("s", windows . swapWith) ] ++
+        , ("m", windows . swapMasterWith), ("s", windows . swapWith)
+        , ("t", sinkWindow ), ("S-t", floatWindow)
+        ] ++
         [ ("u " ++ otherModMasks ++ tag, action tag)
         | tag <- myWorkspaces
         , (otherModMasks, action) <- [ ("S-", (\t -> windows . W.shiftWin t))
@@ -105,6 +119,9 @@ main = do
     ] ++
     [ ("M-n", nextWS), ("M-p", prevWS)
     , ("M-S-n", shiftToNext), ("M-S-p", shiftToPrev)
+    ] ++
+    [ ("M-S-t", withFocused float)
+    , ("M-t", withFocused $ windows . W.sink)
     ]
     )
 
