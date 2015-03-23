@@ -14,7 +14,9 @@ data HintConfig = HintConfig
   , hintBgColor :: String
   , hintBorderWidth :: Int
   , hintBorderColor :: String
-  , hintShowTitle :: Bool
+  -- If `hintTitleMaxLen` is negative then
+  -- show full title in hint
+  , hintTitleMaxLen :: Int
   }
 
 defaultHConfig :: HintConfig
@@ -25,7 +27,7 @@ defaultHConfig = HintConfig
   , hintBgColor = "#ffff00"
   , hintBorderWidth = 1
   , hintBorderColor = "#101010"
-  , hintShowTitle = True
+  , hintTitleMaxLen = 30
   }
 
 initColor :: Display -> String -> IO Pixel
@@ -61,15 +63,15 @@ createPanel :: Display
   -> Pixel             -- borderColor
   -> Pixel             -- fgColor
   -> Pixel             -- bgColor
-  -> Bool              -- showTitle
+  -> Int               -- titleMaxLen
   -> (String, Window)
   -> IO Window
-createPanel dpy fnt bdw bdc fgColor background showTitle (str, win) = do
+createPanel dpy fnt bdw bdc fgColor background titleLen (str, win) = do
   textProp <- getTextProperty dpy win wM_NAME
   wName <- peekCString . tp_value $ textProp
-  let str' = if showTitle then
-                str ++ ": " ++ wName
-             else str
+  let str'' = if titleLen < 0 then wName
+              else take titleLen wName
+      str' = str ++ ": " ++ str''
   let dflt = defaultScreen dpy
       chLen = textWidth fnt "w"
       strLen = textWidth fnt str'
@@ -111,7 +113,7 @@ createPanels :: Display
   -> Pixel             -- borderColor
   -> Pixel             -- fgColor
   -> Pixel             -- bgColor
-  -> Bool              -- showTitle
+  -> Int               -- titleLen
   -> [(String, Window)]
   -> IO [Window]
 createPanels dpy fnt bdw bdc fg bg showTitle [] = return []
@@ -145,7 +147,7 @@ followHint :: Display
   -> Pixel               -- borderColor
   -> Pixel               -- fgColor
   -> Pixel               -- bgColor
-  -> Bool                -- showTitle
+  -> Int                 -- titleLen
   -> [String]
   -> [Window]
   -> IO (Maybe Window)
@@ -170,12 +172,12 @@ runHints config action = withDisplay $ \dpy ->
     withFocused $ \orgWin -> do
       let strs = hintChar config
           bdw = hintBorderWidth config
-          showTitle = hintShowTitle config
+          titleLen = hintTitleMaxLen config
       fnt <- io . loadQueryFont dpy $ hintFont config
       bdc <- io . initColor dpy $ hintBorderColor config
       fg <- io . initColor dpy $ hintFgColor config
       bg <- io . initColor dpy $ hintBgColor config
-      newWin <- io . followHint dpy fnt bdw bdc fg bg showTitle strs $ currentWindows stk
+      newWin <- io . followHint dpy fnt bdw bdc fg bg titleLen strs $ currentWindows stk
       case newWin of
         Nothing -> focus orgWin
         Just win -> action win
