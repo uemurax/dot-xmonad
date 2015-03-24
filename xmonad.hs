@@ -107,7 +107,7 @@ main = do
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
     [ ("M-f", PH.hintsPromptFocus PH.defaultHConfig myXPConfig) ] ++
-    [ ("M-; " ++ key, runHints myHConfig action)
+    [ ("M-; " ++ key, PH.hintsPromptBringToMaster PH.defaultHConfig myXPConfig)
     | (key, action) <- [ ("f", focus), ("c", killWindow)
         , ("m", windows . swapMasterWith), ("s", windows . swapWith)
         , ("t", sinkWindow ), ("S-t", floatWindow)
