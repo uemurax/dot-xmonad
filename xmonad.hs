@@ -13,6 +13,7 @@ import XMonad.Actions.CycleWS
 import System.IO
 import Data.List
 import XMonad.Hints
+import qualified XMonad.Prompt.Hints as PH
 
 myMask = modMask defaultConfig
 myWorkspaces = map (\x -> [x]) ['a'..'z']
@@ -105,7 +106,7 @@ main = do
     [ ("M-: " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
-    [ ("M-f", runHints myHConfig focus) ] ++
+    [ ("M-f", PH.hintsPromptFocus PH.defaultHConfig myXPConfig) ] ++
     [ ("M-; " ++ key, runHints myHConfig action)
     | (key, action) <- [ ("f", focus), ("c", killWindow)
         , ("m", windows . swapMasterWith), ("s", windows . swapWith)
