@@ -12,8 +12,7 @@ import XMonad.Util.EZConfig(additionalKeysP)
 import XMonad.Actions.CycleWS
 import System.IO
 import Data.List
-import XMonad.Hints
-import qualified XMonad.Prompt.Hints as PH
+import XMonad.Prompt.Hints
 
 myMask = modMask defaultConfig
 myWorkspaces = map (\x -> [x]) ['a'..'z']
@@ -26,37 +25,6 @@ myFadeHook = composeAll
   [ isUnfocused --> transparency 0.2
   ]
 
--- $Hint functions
-swapMasterWith :: (Eq s, Eq a, Eq i) =>
-  a -> W.StackSet i l a s sd -> W.StackSet i l a s sd
-swapMasterWith a = W.swapMaster . W.focusWindow a
-
--- | swap the current focused window and the specified window and focus the specified window
-swapWith :: (Eq a) =>
-  a -> W.StackSet i l a s sd -> W.StackSet i l a s sd
-swapWith = W.modify' . swapWith'
-
-swapWith' :: (Eq a) =>
-  a -> W.Stack a -> W.Stack a
-swapWith' a stk@(W.Stack t ls rs) =
-  if a == t then stk
-  else case findWindow a ls rs of
-    Nothing -> stk
-    Just (Left (ll, lr)) -> W.Stack t ll (lr ++ [a] ++ rs)
-    Just (Right (rl, rr)) -> W.Stack t (rr ++ [a] ++ ls) rl
-
-findWindow :: (Eq a) => a -> [a] -> [a] -> Maybe (Either ([a], [a]) ([a], [a]))
-findWindow a ls rs = case findZ a (ls, []) of
-  Nothing -> case findZ a (rs, []) of
-    Nothing -> Nothing
-    Just r -> Just (Right r)
-  Just l -> Just (Left l)
-
-findZ :: (Eq a) => a -> ([a], [a]) -> Maybe ([a], [a])
-findZ a ([], _) = Nothing
-findZ a (x:xs, ys) =
-  if a == x then Just (xs, ys)
-  else findZ a (xs, x:ys)
 
 -- | float and sink a window
 floatWindow :: Window -> X ()
@@ -106,16 +74,14 @@ main = do
     [ ("M-: " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
-    [ ("M-f", PH.hintsPromptFocus PH.defaultHConfig myXPConfig) ] ++
-    [ ("M-; " ++ key, PH.hintsPromptBringToMaster PH.defaultHConfig myXPConfig)
-    | (key, action) <- [ ("f", focus), ("c", killWindow)
-        , ("m", windows . swapMasterWith), ("s", windows . swapWith)
-        , ("t", sinkWindow ), ("S-t", floatWindow)
+    [ ("M-f", hintPrompt Focus defaultHConfig myXPConfig) ] ++
+    [ ("M-; " ++ key, hintPrompt action defaultHConfig myXPConfig)
+    | (key, action) <- [ ("f", Focus), ("m", BringToMaster)
+        , ("c", Close), ("s", Swap)
+        , ("t", Sink), ("S-t", Float)
         ] ++
-        [ ("u " ++ otherModMasks ++ tag, action tag)
+        [ ("u " ++ tag, BringToWS tag)
         | tag <- myWorkspaces
-        , (otherModMasks, action) <- [ ("S-", (\t -> windows . W.shiftWin t))
-                                     , ("", (\t a -> windows $ W.greedyView t . W.shiftWin t a))]
         ]
     ] ++
     [ ("M-n", nextWS), ("M-p", prevWS)
