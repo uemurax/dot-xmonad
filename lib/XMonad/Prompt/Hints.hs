@@ -1,6 +1,7 @@
 module XMonad.Prompt.Hints
   ( HintAction (..)
   , HintPrompt (..)
+  , HintConfig (..)
   , hintPrompt
   , defaultHConfig
   ) where
@@ -20,12 +21,16 @@ class (XPrompt a) => HintAction a where
 data HintConfig = HintConfig
   { hintChar :: String
   , hintFont :: String
+  , hintFgColor :: String
+  , hintBgColor :: String
   , hintTitleLen :: Int
   }
 
 defaultHConfig = HintConfig
   { hintChar = "jfnvuthgbymridkcoelspwaqz"
   , hintFont = "-misc-fixed-*-*-*-*-12-*-*-*-*-*-*-*"
+  , hintFgColor = "#000000"
+  , hintBgColor = "#f0f040"
   , hintTitleLen = 30
   }
 
@@ -55,19 +60,18 @@ instance HintAction HintPrompt where
   hintAction Float w = float w
   hintAction Sink w = windows $ W.sink w
 
-hintsPromptFocus = hintPrompt Focus
-hintsPromptBringToMaster = hintPrompt BringToMaster
-
 hintPrompt :: (HintAction a) => a -> HintConfig -> XPConfig -> X ()
 hintPrompt t h c = do
   let titleLen = hintTitleLen h
+      fg = hintFgColor h
+      bg = hintBgColor h
   dpy <- asks display
   xmf <- initXMF $ hintFont h
   wm <- windowMap $ hintChar h
   hs <- createHints xmf titleLen wm
   let ws = map (\(x, y) -> y) hs
   showWindows ws
-  drawHints dpy xmf hs
+  drawHints dpy xmf fg bg hs
   mkXPrompt t c (\_ -> return []) $ \s -> do
     let mw = lookup s wm
     case mw of
@@ -100,16 +104,16 @@ createHint xmf n (str', win) = do
   ret <- createNewWindow (Rectangle x' y' (fi width) (fi height)) Nothing "" False
   return (str, ret)
 
-drawHint :: Display -> XMonadFont -> (String, Window) -> X ()
-drawHint dpy xmf (str, win) = do
+drawHint :: Display -> XMonadFont -> String -> String -> (String, Window) -> X ()
+drawHint dpy xmf fg bg (str, win) = do
   gc <- io $ createGC dpy win
   (ascent, descent) <- textExtentsXMF xmf str 
-  printStringXMF dpy win xmf gc "black" "yellow" 0 ascent str
+  printStringXMF dpy win xmf gc fg bg 0 ascent str
   io $ freeGC dpy gc
 
-drawHints :: Display -> XMonadFont -> [(String, Window)] -> X ()
-drawHints dpy xmf [] = return ()
-drawHints dpy xmf (w:ws) = do
-  drawHint dpy xmf w
-  drawHints dpy xmf ws
+drawHints :: Display -> XMonadFont -> String -> String -> [(String, Window)] -> X ()
+drawHints dpy xmf fg bg [] = return ()
+drawHints dpy xmf fg bg (w:ws) = do
+  drawHint dpy xmf fg bg w
+  drawHints dpy xmf fg bg ws
 

@@ -26,19 +26,6 @@ myFadeHook = composeAll
   ]
 
 
--- | float and sink a window
-floatWindow :: Window -> X ()
-floatWindow w = do
-  float w
-  focus w
-
-sinkWindow :: Window -> X ()
-sinkWindow w = do
-  windows $ W.sink w
-  focus w
-
-
-
 main = do
   xmproc <- spawnPipe "xmobar"
   xmonad $ defaultConfig
