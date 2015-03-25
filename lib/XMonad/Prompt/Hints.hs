@@ -28,10 +28,10 @@ data HintConfig = HintConfig
 
 defaultHConfig = HintConfig
   { hintChar = "jfnvuthgbymridkcoelspwaqz"
-  , hintFont = "-misc-fixed-*-*-*-*-12-*-*-*-*-*-*-*"
+  , hintFont = "-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*"
   , hintFgColor = "#000000"
   , hintBgColor = "#f0f040"
-  , hintTitleLen = 30
+  , hintTitleLen = 20
   }
 
 data HintPrompt = Focus | BringToMaster | Close | BringToWS String
@@ -93,7 +93,7 @@ createHint xmf n (str', win) = do
   let str'' = show nw
       str''' = if n < 0 then str''
             else take n str''
-      str = str' ++ ": " ++ str'''
+      str = " " ++ str' ++ ": " ++ str''' ++ " "
   dpy <- asks display
   width <- textWidthXMF dpy xmf str
   (ascent, descent) <- textExtentsXMF xmf str
