@@ -7,15 +7,18 @@ import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Circle
 import XMonad.Prompt
 import XMonad.Prompt.Window
+import XMonad.Prompt.Workspace
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.EZConfig(additionalKeysP)
 import XMonad.Actions.CycleWS
 import System.IO
 import Data.List
 import XMonad.Prompt.Hints
+import XMonad.Util.List
 
 myMask = modMask defaultConfig
-myWorkspaces = map (\x -> [x]) ['a'..'z']
+numWorkspaces = 64
+myWorkspaces =  take numWorkspaces $ enumWords ['a'..'z']
 myTall = Tall 1 (3/100) (5/7)
 myXPConfig = defaultXPConfig
   { searchPredicate = isInfixOf
@@ -50,10 +53,11 @@ main = do
     } `additionalKeysP` (
     [ ("M-S-z" , spawn "xscreensaver-command -lock")
     ] ++
-    [ ("M-u " ++ otherModMasks ++ tag, action tag)
-      | tag <- myWorkspaces
-      , (otherModMasks, action) <- [ ("", windows . W.greedyView)
-                                   , ("S-", windows . W.shift)]
+    [ ("M-u " ++ key, workspacePrompt myXPConfig action)
+    | (key, action) <- [ ("g", windows . W.greedyView)
+                       , ("b", windows . W.shift)
+                       , ("f", \s -> hintPrompt (BringToWS s) defaultHConfig myXPConfig)
+                       ]
     ] ++
     [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
       | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "Circle")]
@@ -66,9 +70,6 @@ main = do
     | (key, action) <- [ ("f", Focus), ("m", BringToMaster)
         , ("c", Close), ("s", Swap)
         , ("t", Sink), ("S-t", Float)
-        ] ++
-        [ ("u " ++ tag, BringToWS tag)
-        | tag <- myWorkspaces
         ]
     ] ++
     [ ("M-n", nextWS), ("M-p", prevWS)
