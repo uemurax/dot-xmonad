@@ -4,12 +4,7 @@ module XMonad.Util.Hints
 
 import XMonad
 import qualified XMonad.StackSet as W
-
-diag :: [a] -> [[a]]
-diag l = map (\x -> [x]) l ++ [x:xs | xs <- diag l, x <- l]
-
-mkHintStr :: [a] -> [[a]]
-mkHintStr l = map reverse $ diag l
+import XMonad.Util.List
 
 windowMap' :: W.StackSet i l a s sd -> [String] -> [(String, a)]
 windowMap' stk ss = zip ss $ W.index stk
@@ -18,5 +13,5 @@ windowMap'' :: [String] -> X ([(String, Window)])
 windowMap'' ss = withWindowSet (\ws -> return (windowMap' ws ss))
 
 windowMap :: String -> X ([(String, Window)])
-windowMap s = windowMap'' $ mkHintStr s
+windowMap s = windowMap'' $ enumWords s
 
