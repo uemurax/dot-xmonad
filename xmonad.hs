@@ -13,17 +13,19 @@ import XMonad.Util.EZConfig(additionalKeysP)
 import XMonad.Actions.CycleWS
 import System.IO
 import Data.List
+import Data.Default
 import XMonad.Prompt.Hints
 import XMonad.Util.List
 
-myMask = modMask defaultConfig
+myConfig = def
+myMask = modMask myConfig
 numWorkspaces = 64
 myWorkspaces =  take numWorkspaces $ enumWords ['a'..'z']
 myTall = Tall 1 (3/100) (5/7)
-myXPConfig = defaultXPConfig
+myXPConfig = def
   { searchPredicate = isInfixOf
   }
-myHConfig = defaultHConfig
+myHConfig = def
 myFadeHook = composeAll
   [ isUnfocused --> transparency 0.2
   ]
@@ -31,11 +33,11 @@ myFadeHook = composeAll
 
 main = do
   xmproc <- spawnPipe "xmobar"
-  xmonad $ defaultConfig
+  xmonad $ myConfig
     { terminal = "urxvt"
     , borderWidth = 0
     , workspaces = myWorkspaces
-    , manageHook = manageDocks <+> manageHook defaultConfig
+    , manageHook = manageDocks <+> manageHook myConfig
     , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| Circle ||| Mirror Circle)
     , logHook = do
         fadeWindowsLogHook myFadeHook
@@ -56,7 +58,7 @@ main = do
     [ ("M-u " ++ key, workspacePrompt myXPConfig action)
     | (key, action) <- [ ("g", windows . W.greedyView)
                        , ("b", windows . W.shift)
-                       , ("f", \s -> hintPrompt (BringToWS s) defaultHConfig myXPConfig)
+                       , ("f", \s -> hintPrompt (BringToWS s) myHConfig myXPConfig)
                        ]
     ] ++
     [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
@@ -65,8 +67,8 @@ main = do
     [ ("M-: " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
-    [ ("M-f", hintPrompt Focus defaultHConfig myXPConfig) ] ++
-    [ ("M-; " ++ key, hintPrompt action defaultHConfig myXPConfig)
+    [ ("M-f", hintPrompt Focus myHConfig myXPConfig) ] ++
+    [ ("M-; " ++ key, hintPrompt action myHConfig myXPConfig)
     | (key, action) <- [ ("f", Focus), ("m", BringToMaster)
         , ("c", Close), ("s", Swap)
         , ("t", Sink), ("S-t", Float)

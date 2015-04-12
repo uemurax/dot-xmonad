@@ -15,6 +15,8 @@ import XMonad.Util.Hints
 import XMonad.Util.XUtils
 import XMonad.Util.Misc
 
+import Data.Default
+
 class (XPrompt a) => HintAction a where
   hintAction :: a -> Window -> X ()
 
@@ -33,6 +35,9 @@ defaultHConfig = HintConfig
   , hintBgColor = "#f0f040"
   , hintTitleLen = 20
   }
+
+instance Default HintConfig where
+  def = defaultHConfig
 
 data HintPrompt = Focus | BringToMaster | Close | BringToWS String
                 | Swap | Float | Sink
