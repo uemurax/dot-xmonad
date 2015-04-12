@@ -77,6 +77,8 @@ main = do
     ] ++
     [ ("M-S-t", withFocused float)
     , ("M-t", withFocused $ windows . W.sink)
+    ] ++
+    [ ("M-@", spawn "import -window root screenshot.jpg")
     ]
     )
 
