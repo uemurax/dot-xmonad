@@ -36,7 +36,7 @@ main = do
     , borderWidth = 0
     , workspaces = myWorkspaces
     , manageHook = manageDocks <+> manageHook defaultConfig
-    , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| Circle)
+    , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| Circle ||| Mirror Circle)
     , logHook = do
         fadeWindowsLogHook myFadeHook
         dynamicLogWithPP xmobarPP
@@ -60,7 +60,7 @@ main = do
                        ]
     ] ++
     [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
-      | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "Circle")]
+      | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "Circle"), ("S-c", "Mirror Circle")]
     ] ++
     [ ("M-: " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
