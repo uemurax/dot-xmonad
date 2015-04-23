@@ -81,6 +81,11 @@ main = do
     , ("M-t", withFocused $ windows . W.sink)
     ] ++
     [ ("M-@", spawn "import -window root screenshot.jpg")
+    ] ++
+    [ ("M-a " ++ key, spawn command)
+    | (key, command) <- [ ("e", "urxvt -e emacsclient -t")
+        , ("w", "dwb")
+        ]
     ]
     )
 
