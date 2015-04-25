@@ -27,7 +27,7 @@ myXPConfig = def
   }
 myHConfig = def
 myFadeHook = composeAll
-  [ isUnfocused --> transparency 0.2
+  [ transparency 0.25
   ]
 
 
