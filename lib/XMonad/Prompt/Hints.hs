@@ -40,7 +40,7 @@ instance Default HintConfig where
   def = defaultHConfig
 
 data HintPrompt = Focus | BringToMaster | Close | BringToWS String
-                | Swap | Float | Sink
+                | Swap | Float | Sink | Maximize
 
 instance XPrompt HintPrompt where
   showXPrompt Focus = "Focus window: "
@@ -50,6 +50,7 @@ instance XPrompt HintPrompt where
   showXPrompt Swap = "Swap: "
   showXPrompt Float = "Float: "
   showXPrompt Sink = "Sink: "
+  showXPrompt Maximize = "Maximize: "
   commandToComplete _ c = c
   nextCompletion _ = getNextCompletion
 
@@ -64,6 +65,7 @@ instance HintAction HintPrompt where
   hintAction Swap w = windows $ swapWith w
   hintAction Float w = float w
   hintAction Sink w = windows $ W.sink w
+  hintAction Maximize w = maximizeWindow w
 
 hintPrompt :: (HintAction a) => a -> HintConfig -> XPConfig -> X ()
 hintPrompt t h c = do

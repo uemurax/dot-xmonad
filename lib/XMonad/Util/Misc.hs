@@ -1,5 +1,6 @@
 module XMonad.Util.Misc
   ( swapWith
+  , maximizeWindow
   ) where
 
 import XMonad
@@ -31,4 +32,12 @@ findZ a ([], _) = Nothing
 findZ a (x:xs, ys) =
   if a == x then Just (xs, ys)
   else findZ a (xs, x:ys)
+
+maximizeWindow :: Window -> X ()
+maximizeWindow win = withDisplay $ \d -> do
+  let s = defaultScreen d
+      w = fromIntegral $ displayWidth d s
+      h = fromIntegral $ displayHeight d s
+  io $ moveResizeWindow d win 0 0 w h
+  float win
 

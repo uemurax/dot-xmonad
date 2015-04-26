@@ -16,6 +16,7 @@ import Data.List
 import Data.Default
 import XMonad.Prompt.Hints
 import XMonad.Util.List
+import XMonad.Util.Misc
 
 myConfig = def
 myMask = modMask myConfig
@@ -28,8 +29,8 @@ myXPConfig = def
 myHConfig = def
 myFadeHook = composeAll
   [ transparency 0.25
+  , isFloating --> transparency 0.5
   ]
-
 
 main = do
   xmproc <- spawnPipe "xmobar"
@@ -71,13 +72,13 @@ main = do
     [ ("M-; " ++ key, hintPrompt action myHConfig myXPConfig)
     | (key, action) <- [ ("f", Focus), ("m", BringToMaster)
         , ("c", Close), ("s", Swap)
-        , ("t", Sink), ("S-t", Float)
+        , ("t", Sink), ("S-t", Float), ("S-m", Maximize)
         ]
     ] ++
     [ ("M-n", nextWS), ("M-p", prevWS)
     , ("M-S-n", shiftToNext), ("M-S-p", shiftToPrev)
     ] ++
-    [ ("M-S-t", withFocused float)
+    [ ("M-S-t", withFocused maximizeWindow)
     , ("M-t", withFocused $ windows . W.sink)
     ] ++
     [ ("M-@", spawn "import -window root screenshot.jpg")
