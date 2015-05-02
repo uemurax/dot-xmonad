@@ -1,7 +1,6 @@
 import XMonad hiding ( (|||) )
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
-import XMonad.Hooks.FadeWindows
 import qualified XMonad.StackSet as W
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Circle
@@ -17,6 +16,7 @@ import Data.Default
 import XMonad.Prompt.Hints
 import XMonad.Util.List
 import XMonad.Util.Misc
+import XMonad.Actions.Transset
 
 myConfig = def
 myMask = modMask myConfig
@@ -27,10 +27,7 @@ myXPConfig = def
   { searchPredicate = isInfixOf
   }
 myHConfig = def
-myFadeHook = composeAll
-  [ transparency 0.25
-  , isFloating --> transparency 0.5
-  ]
+myTranssetConfig = def
 
 main = do
   xmproc <- spawnPipe "xmobar"
@@ -41,12 +38,10 @@ main = do
     , manageHook = manageDocks <+> manageHook myConfig
     , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| Circle ||| Mirror Circle)
     , logHook = do
-        fadeWindowsLogHook myFadeHook
         dynamicLogWithPP xmobarPP
           { ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor "green" "" . shorten 50
           }
-    , handleEventHook = fadeWindowsEventHook
     , startupHook = spawn $ "xscreensaver -no-splash"
       ++ "& unclutter -idle 1 -jitter 100 -root"
       ++ "& xcompmgr"
@@ -87,6 +82,9 @@ main = do
     | (key, command) <- [ ("e", "urxvt -e emacsclient -t")
         , ("w", "dwb")
         ]
+    ] ++
+    [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
+    | (key, t) <- [("S-.", Inc), (">", Inc), ("S-,", Dec), ("<", Dec), ("S-o", Toggle)]
     ]
     )
 
