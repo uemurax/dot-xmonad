@@ -32,7 +32,7 @@ myTranssetConfig = def
 main = do
   xmproc <- spawnPipe "xmobar"
   xmonad $ myConfig
-    { terminal = "urxvt"
+    { terminal = "x-terminal-emulator"
     , borderWidth = 0
     , workspaces = myWorkspaces
     , manageHook = manageDocks <+> manageHook myConfig
@@ -79,8 +79,8 @@ main = do
     [ ("M-@", spawn "import -window root screenshot.jpg")
     ] ++
     [ ("M-a " ++ key, spawn command)
-    | (key, command) <- [ ("e", "urxvt -e emacsclient -t")
-        , ("w", "dwb")
+    | (key, command) <- [ ("e", "x-terminal-emulator -e emacsclient -t")
+        , ("w", "x-www-browser")
         ]
     ] ++
     [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
