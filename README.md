@@ -5,21 +5,23 @@ Configurations for [xmonad](http://xmonad.org).
 
 ## Requirements
 
-`xmobar`
+* `xmobar`
 :   a status bar
-`xscreensaver`
+* `xscreensaver`
 :   to lock screen
-`unclutter`
+* `unclutter`
 :   to make mouse cursor invisible
-`xcompmgr` and `transset`
+* `xcompmgr` and `transset`
 :   to make windows transparent
-`feh`
+* `feh`
 :   to set background image
-`imagemagick`
+* `imagemagick`
 :   to take a screenshot
 
 ## Install
 
-    $ git clone https://github.com/uemurax/dot-xmonad ~/.xmonad
-    $ xmonad --recompile
+```
+$ git clone https://github.com/uemurax/dot-xmonad ~/.xmonad
+$ xmonad --recompile
+```
 
