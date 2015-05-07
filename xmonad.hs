@@ -42,13 +42,14 @@ main = do
           { ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor "green" "" . shorten 50
           }
-    , startupHook = spawn $ "unclutter -idle 1 -jitter 100 -root& "
-      ++ "xcompmgr& "
-      ++ "feh --bg-scale ~/Pictures/desktop-background& "
+    , startupHook = spawn $ "xscreensaver -no-splash"
+      ++ "& unclutter -idle 1 -jitter 100 -root"
+      ++ "& xcompmgr"
+      ++ "& feh --bg-scale ~/Pictures/desktop-background"
     , focusFollowsMouse = False
     , clickJustFocuses = True
     } `additionalKeysP` (
-    [ ("M-S-z" , spawn "dm-tool lock")
+    [ ("M-S-z" , spawn "xscreensaver-command -lock")
     ] ++
     [ ("M-u " ++ key, workspacePrompt myXPConfig action)
     | (key, action) <- [ ("g", windows . W.greedyView)
@@ -75,7 +76,7 @@ main = do
     [ ("M-S-t", withFocused maximizeWindow)
     , ("M-t", withFocused $ windows . W.sink)
     ] ++
-    [ ("M-@", spawn "import -window root ~/Pictures/screenshot-`date +%Y%m%d-%H%M%S`.jpg")
+    [ ("M-@", spawn "import -window root screenshot.jpg")
     ] ++
     [ ("M-a " ++ key, spawn command)
     | (key, command) <- [ ("e", "x-terminal-emulator -e emacsclient -t")
