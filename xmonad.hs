@@ -42,9 +42,9 @@ main = do
           { ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor "green" "" . shorten 50
           }
-    , startupHook = spawn $ "& unclutter -idle 1 -jitter 100 -root"
-      ++ "& xcompmgr"
-      ++ "& feh --bg-scale ~/Pictures/desktop-background"
+    , startupHook = spawn $ "unclutter -idle 1 -jitter 100 -root& "
+      ++ "xcompmgr& "
+      ++ "feh --bg-scale ~/Pictures/desktop-background& "
     , focusFollowsMouse = False
     , clickJustFocuses = True
     } `additionalKeysP` (
