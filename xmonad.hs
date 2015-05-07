@@ -42,14 +42,13 @@ main = do
           { ppOutput = hPutStrLn xmproc
           , ppTitle = xmobarColor "green" "" . shorten 50
           }
-    , startupHook = spawn $ "xscreensaver -no-splash"
-      ++ "& unclutter -idle 1 -jitter 100 -root"
+    , startupHook = spawn $ "& unclutter -idle 1 -jitter 100 -root"
       ++ "& xcompmgr"
       ++ "& feh --bg-scale ~/Pictures/desktop-background"
     , focusFollowsMouse = False
     , clickJustFocuses = True
     } `additionalKeysP` (
-    [ ("M-S-z" , spawn "xscreensaver-command -lock")
+    [ ("M-S-z" , spawn "dm-tool lock")
     ] ++
     [ ("M-u " ++ key, workspacePrompt myXPConfig action)
     | (key, action) <- [ ("g", windows . W.greedyView)
