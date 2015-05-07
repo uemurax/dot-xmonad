@@ -76,7 +76,7 @@ main = do
     [ ("M-S-t", withFocused maximizeWindow)
     , ("M-t", withFocused $ windows . W.sink)
     ] ++
-    [ ("M-@", spawn "import -window root screenshot.jpg")
+    [ ("M-@", spawn "import -window root ~/Pictures/screenshot-`date +%Y%m%d-%H%M%S`.jpg")
     ] ++
     [ ("M-a " ++ key, spawn command)
     | (key, command) <- [ ("e", "x-terminal-emulator -e emacsclient -t")
