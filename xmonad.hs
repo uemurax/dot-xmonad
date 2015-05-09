@@ -23,11 +23,13 @@ myMask = modMask myConfig
 numWorkspaces = 64
 myWorkspaces =  take numWorkspaces $ enumWords ['a'..'z']
 myTall = Tall 1 (3/100) (5/7)
+myFont = "xft:MigMix 1P"
 myXPConfig = def
   { searchPredicate = isInfixOf
+  , font = myFont
   }
 myHConfig = def
-  { hintFont = "xft:MigMix 1P"
+  { hintFont = myFont
   }
 myTranssetConfig = def
 
