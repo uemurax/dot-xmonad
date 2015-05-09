@@ -13,6 +13,8 @@ import XMonad.Actions.CycleWS
 import System.IO
 import Data.List
 import Data.Default
+import qualified Data.Map as M
+import Control.Arrow (first)
 import XMonad.Prompt.Hints
 import XMonad.Util.List
 import XMonad.Util.Misc
@@ -27,6 +29,13 @@ myFont = "xft:MigMix 1P"
 myXPConfig = def
   { searchPredicate = isInfixOf
   , font = myFont
+  , promptKeymap = M.unionWith (\x y -> y) emacsLikeXPKeymap $
+                   M.fromList $
+                   map (first $ (,) controlMask)
+                   [ (xK_h, deleteString Prev)
+                   , (xK_u, killBefore)
+                   , (xK_w, killWord Prev)
+                   ]
   }
 myHConfig = def
   { hintFont = myFont
