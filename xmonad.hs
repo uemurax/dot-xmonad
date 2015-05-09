@@ -27,6 +27,8 @@ myXPConfig = def
   { searchPredicate = isInfixOf
   }
 myHConfig = def
+  { hintFont = "xft:MigMix 1P"
+  }
 myTranssetConfig = def
 
 main = do
