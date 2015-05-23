@@ -1,5 +1,4 @@
 import XMonad hiding ( (|||) )
-import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
 import qualified XMonad.StackSet as W
 import XMonad.Layout.LayoutCombinators
@@ -43,18 +42,12 @@ myHConfig = def
 myTranssetConfig = def
 
 main = do
-  xmproc <- spawnPipe "xmobar"
   xmonad $ myConfig
     { terminal = "x-terminal-emulator"
     , borderWidth = 0
     , workspaces = myWorkspaces
     , manageHook = manageDocks <+> manageHook myConfig
     , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| Circle ||| Mirror Circle)
-    , logHook = do
-        dynamicLogWithPP xmobarPP
-          { ppOutput = hPutStrLn xmproc
-          , ppTitle = xmobarColor "green" "" . shorten 50
-          }
     , startupHook = spawn $ "xscreensaver -no-splash"
       ++ "& unclutter -idle 1 -jitter 100 -root"
       ++ "& xcompmgr"
