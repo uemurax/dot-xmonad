@@ -2,7 +2,6 @@ import XMonad hiding ( (|||) )
 import XMonad.Hooks.ManageDocks
 import qualified XMonad.StackSet as W
 import XMonad.Layout.LayoutCombinators
-import XMonad.Layout.Circle
 import XMonad.Prompt
 import XMonad.Prompt.Window
 import XMonad.Prompt.Workspace
@@ -18,12 +17,14 @@ import XMonad.Prompt.Hints
 import XMonad.Util.List
 import XMonad.Util.Misc
 import XMonad.Actions.Transset
+import XMonad.Layout.CircleEX
 
 myConfig = def
 myMask = modMask myConfig
 numWorkspaces = 64
 myWorkspaces =  take numWorkspaces $ enumWords ['a'..'z']
 myTall = Tall 1 (3/100) (5/7)
+myCircle = CircleEX 1 (3/100) (5/7)
 myFont = "xft:IPAGothic"
 myXPConfig = def
   { searchPredicate = isInfixOf
@@ -47,7 +48,7 @@ main = do
     , borderWidth = 0
     , workspaces = myWorkspaces
     , manageHook = manageDocks <+> manageHook myConfig
-    , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| Circle ||| Mirror Circle)
+    , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
     , startupHook = spawn $ "xscreensaver -no-splash"
       ++ "& unclutter -idle 1 -jitter 100 -root"
       ++ "& xcompmgr"
@@ -64,7 +65,7 @@ main = do
                        ]
     ] ++
     [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
-      | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "Circle"), ("S-c", "Mirror Circle")]
+      | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "CircleEX"), ("S-c", "Mirror CircleEX")]
     ] ++
     [ ("M-: " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
