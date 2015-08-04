@@ -50,3 +50,5 @@ Screenshots
 -----------
 
 ![circle+transparent](images/circle.jpg)
+
+![hints](images/hints.jpg)
