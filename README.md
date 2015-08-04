@@ -48,3 +48,7 @@ Here's the list of operations.
 | `M-; S-t` | Float the selected window |
 | `M-; S-m` | Float and maximize the selected window |
 
+Screenshots
+-----------
+
+![circle+transparent](images/circle.jpg)
