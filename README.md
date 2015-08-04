@@ -49,6 +49,10 @@ Here's the list of operations.
 Screenshots
 -----------
 
+### Circle + Transparent ###
+
 ![circle+transparent](images/circle.jpg)
+
+### Hints ###
 
 ![hints](images/hints.jpg)
