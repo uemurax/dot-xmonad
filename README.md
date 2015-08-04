@@ -56,3 +56,7 @@ Screenshots
 ### Hints ###
 
 ![hints](images/hints.jpg)
+
+### Spacing ###
+
+![spacing](images/spacing.jpg)
