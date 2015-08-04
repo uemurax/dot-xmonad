@@ -6,8 +6,6 @@ Configurations for [xmonad](http://xmonad.org).
 Requirements
 ------------
 
-* `xmobar`
-:   a status bar
 * `xscreensaver`
 :   to lock screen
 * `unclutter`
