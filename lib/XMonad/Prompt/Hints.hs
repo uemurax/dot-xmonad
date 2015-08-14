@@ -31,7 +31,7 @@ data HintConfig = HintConfig
   }
 
 defaultHConfig = HintConfig
-  { hintChar = "jfnvuthgbymridkcoelspwaqz"
+  { hintChar = "jfkdlsahg"
   , hintFont = "-misc-fixed-*-*-*-*-14-*-*-*-*-*-*-*"
   , hintFgColor = "#000000"
   , hintBgColor = "#f0f040"
