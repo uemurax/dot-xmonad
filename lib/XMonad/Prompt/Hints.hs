@@ -17,6 +17,7 @@ import XMonad.Util.Misc
 
 import Data.Default
 import Data.List
+import Data.Char (toUpper)
 
 class (XPrompt a) => HintAction a where
   hintAction :: a -> Window -> X ()
@@ -102,7 +103,7 @@ createHint xmf n (str', win) = do
   let str'' = show nw
       str''' = if n < 0 then str''
             else take n str''
-      str = " " ++ str' ++ ": " ++ str''' ++ " "
+      str = " " ++ map toUpper str' ++ ": " ++ str''' ++ " "
   dpy <- asks display
   width <- textWidthXMF dpy xmf str
   (ascent, descent) <- textExtentsXMF xmf str
