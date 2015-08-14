@@ -16,6 +16,7 @@ import XMonad.Util.XUtils
 import XMonad.Util.Misc
 
 import Data.Default
+import Data.List
 
 class (XPrompt a) => HintAction a where
   hintAction :: a -> Window -> X ()
@@ -77,9 +78,10 @@ hintPrompt t h c = do
   wm <- windowMap $ hintChar h
   hs <- createHints xmf titleLen wm
   let ws = map (\(x, y) -> y) hs
+      ks = map (\(x, y) -> x) wm
   showWindows ws
   drawHints dpy xmf fg bg hs
-  mkXPrompt t c (\_ -> return []) $ \s -> do
+  mkXPrompt t c (\s -> return $ filter (isPrefixOf s) ks) $ \s -> do
     let mw = lookup s wm
     case mw of
       Nothing -> return ()

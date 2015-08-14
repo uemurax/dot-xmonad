@@ -46,6 +46,11 @@ myHConfig = def
   }
 myTranssetConfig = def
 
+myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
+                      { autoComplete = Just 0
+                      , searchPredicate = isPrefixOf
+                      }
+
 main = do
   xmonad $ myConfig
     { terminal = "x-terminal-emulator"
@@ -74,8 +79,8 @@ main = do
     [ ("M-: " ++ key, action)
     | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
     ] ++
-    [ ("M-f", hintPrompt Focus myHConfig myXPConfig) ] ++
-    [ ("M-; " ++ key, hintPrompt action myHConfig myXPConfig)
+    [ ("M-f", myHintPrompt Focus) ] ++
+    [ ("M-; " ++ key, myHintPrompt action)
     | (key, action) <- [ ("f", Focus), ("m", BringToMaster)
         , ("c", Close), ("s", Swap)
         , ("t", Sink), ("S-t", Float), ("S-m", Maximize)
