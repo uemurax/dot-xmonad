@@ -14,6 +14,7 @@ import XMonad.Util.NamedWindows
 import XMonad.Util.Hints
 import XMonad.Util.XUtils
 import XMonad.Util.Misc
+import XMonad.Actions.ScreenShot
 
 import Data.Default
 import Data.List
@@ -42,7 +43,7 @@ instance Default HintConfig where
   def = defaultHConfig
 
 data HintPrompt = Focus | BringToMaster | Close | BringToWS String
-                | Swap | Float | Sink | Maximize
+                | Swap | Float | Sink | Maximize | ScreenShot (Window -> X String)
 
 instance XPrompt HintPrompt where
   showXPrompt Focus = "Focus window: "
@@ -53,6 +54,7 @@ instance XPrompt HintPrompt where
   showXPrompt Float = "Float: "
   showXPrompt Sink = "Sink: "
   showXPrompt Maximize = "Maximize: "
+  showXPrompt (ScreenShot _) = "Take screen shot: "
   commandToComplete _ c = c
   nextCompletion _ = getNextCompletion
 
@@ -68,6 +70,7 @@ instance HintAction HintPrompt where
   hintAction Float w = float w
   hintAction Sink w = windows $ W.sink w
   hintAction Maximize w = maximizeWindow w
+  hintAction (ScreenShot c) w = takeScreenShot c w
 
 hintPrompt :: (HintAction a) => a -> HintConfig -> XPConfig -> X ()
 hintPrompt t h c = do

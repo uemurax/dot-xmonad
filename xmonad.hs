@@ -84,6 +84,7 @@ main = do
     | (key, action) <- [ ("f", Focus), ("m", BringToMaster)
         , ("c", Close), ("s", Swap)
         , ("t", Sink), ("S-t", Float), ("S-m", Maximize)
+        , ("@", ScreenShot $ \w -> return $ "~/screenshot-" ++ show w ++ ".png")
         ]
     ] ++
     [ ("M-n", nextWS), ("M-p", prevWS)
