@@ -1,5 +1,4 @@
 import XMonad hiding ( (|||) )
-import XMonad.Hooks.ManageDocks
 import qualified XMonad.StackSet as W
 import XMonad.Layout.LayoutCombinators
 import XMonad.Layout.Spacing
@@ -56,8 +55,7 @@ main = do
     { terminal = "x-terminal-emulator"
     , borderWidth = 0
     , workspaces = myWorkspaces
-    , manageHook = manageDocks <+> manageHook myConfig
-    , layoutHook = avoidStruts $ (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
+    , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
     , startupHook = spawn $ "xscreensaver -no-splash"
       ++ "& unclutter -idle 1 -jitter 100 -root"
       ++ "& xcompmgr"
