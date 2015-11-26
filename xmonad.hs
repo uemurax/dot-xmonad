@@ -94,7 +94,7 @@ main = do
     [ ("M-@", spawn "import -window root screenshot.jpg")
     ] ++
     [ ("M-a " ++ key, spawn command)
-    | (key, command) <- [ ("e", "x-terminal-emulator -e emacsclient -t")
+    | (key, command) <- [ ("e", "emacsclient -c")
         , ("w", "x-www-browser")
         ]
     ] ++
