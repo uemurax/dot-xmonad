@@ -42,7 +42,12 @@ myXPConfig = def
   }
 myHConfig = def
   { hintFont = myFont
-  , hintLayout = Just . Layout $ CircleEX 0 (3/100) (4/7) (1/11)
+  , hintLayout =
+      do l <- withWindowSet $ return . W.layout . W.workspace . W.current
+         let s = description l
+         if "Full" `isInfixOf` s
+           then return . Just . Layout $ CircleEX 0 (3/100) (4/7) (1/11)
+           else return Nothing
   }
 myTranssetConfig = def
 

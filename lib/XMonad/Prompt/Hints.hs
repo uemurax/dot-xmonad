@@ -29,7 +29,7 @@ data HintConfig = HintConfig
   , hintFgColor :: String
   , hintBgColor :: String
   , hintTitleLen :: Int
-  , hintLayout :: Maybe (Layout Window)
+  , hintLayout :: X (Maybe (Layout Window))
   }
 
 defaultHConfig = HintConfig
@@ -38,7 +38,7 @@ defaultHConfig = HintConfig
   , hintFgColor = "#000000"
   , hintBgColor = "#f0f040"
   , hintTitleLen = 20
-  , hintLayout = Nothing
+  , hintLayout = return Nothing
   }
 
 instance Default HintConfig where
@@ -79,7 +79,7 @@ hintPrompt t h c = do
   let titleLen = hintTitleLen h
       fg = hintFgColor h
       bg = hintBgColor h
-      l = hintLayout h
+  l <- hintLayout h
   currentLayout <- dumpLayout l
   dpy <- asks display
   xmf <- initXMF $ hintFont h
