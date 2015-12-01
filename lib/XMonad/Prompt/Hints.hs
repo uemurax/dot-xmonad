@@ -29,6 +29,7 @@ data HintConfig = HintConfig
   , hintFgColor :: String
   , hintBgColor :: String
   , hintTitleLen :: Int
+  , hintLayout :: Maybe (Layout Window)
   }
 
 defaultHConfig = HintConfig
@@ -37,6 +38,7 @@ defaultHConfig = HintConfig
   , hintFgColor = "#000000"
   , hintBgColor = "#f0f040"
   , hintTitleLen = 20
+  , hintLayout = Nothing
   }
 
 instance Default HintConfig where
@@ -77,6 +79,8 @@ hintPrompt t h c = do
   let titleLen = hintTitleLen h
       fg = hintFgColor h
       bg = hintBgColor h
+      l = hintLayout h
+  currentLayout <- dumpLayout l
   dpy <- asks display
   xmf <- initXMF $ hintFont h
   wm <- windowMap $ hintChar h
@@ -92,6 +96,7 @@ hintPrompt t h c = do
       Just w -> hintAction t w
   deleteWindows ws
   releaseXMF xmf
+  storeLayout currentLayout
 
 createHints :: XMonadFont -> Int -> [(String, Window)] -> X ([(String, Window)])
 createHints xmf n [] = return []
@@ -130,3 +135,14 @@ drawHints dpy xmf fg bg (w:ws) = do
   drawHint dpy xmf fg bg w
   drawHints dpy xmf fg bg ws
 
+dumpLayout :: Maybe (Layout Window) -> X (Maybe (Layout Window))
+dumpLayout Nothing = return Nothing
+dumpLayout (Just l) =
+  do state <- gets windowset
+     let currentLayout = W.layout . W.workspace . W.current $ state
+     setLayout l
+     return $ Just currentLayout
+
+storeLayout :: Maybe (Layout Window) -> X ()
+storeLayout Nothing = return ()
+storeLayout (Just l) = setLayout l

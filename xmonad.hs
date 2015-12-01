@@ -42,6 +42,7 @@ myXPConfig = def
   }
 myHConfig = def
   { hintFont = myFont
+  , hintLayout = Just . Layout $ CircleEX 0 (3/100) (4/7) (1/11)
   }
 myTranssetConfig = def
 
