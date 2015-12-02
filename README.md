@@ -6,15 +6,15 @@ Configurations for [xmonad](http://xmonad.org).
 Requirements
 ------------
 
-* `xscreensaver`
-:   to lock screen
-* `unclutter`
-:   to make mouse cursor invisible
-* `xcompmgr` and `transset`
-:   to make windows transparent
-* `feh`
+*   `xscreensaver`
+:   to lock screen.
+    Add `xscreensaver -no-splash &` in your `~/.xinitrc`.
+*   `xcompmgr` and `transset`
+:   to make windows transparent.
+    Add `xcompmgr &` in your `~/.xinitrc`.
+*   `feh`
 :   to set background image
-* `imagemagick`
+*   `imagemagick`
 :   to take a screenshot
 
 Install

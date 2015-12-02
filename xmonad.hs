@@ -62,10 +62,7 @@ main = do
     , borderWidth = 0
     , workspaces = myWorkspaces
     , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
-    , startupHook = spawn $ "xscreensaver -no-splash"
-      ++ "& unclutter -idle 1 -jitter 100 -root"
-      ++ "& xcompmgr"
-      ++ "& feh --bg-scale ~/Pictures/desktop-background"
+    , startupHook = spawn $ "feh --bg-scale ~/Pictures/desktop-background"
     , focusFollowsMouse = False
     , clickJustFocuses = True
     } `additionalKeysP` (
