@@ -28,7 +28,7 @@ myWorkspaces =  take numWorkspaces $ enumWords ['a'..'z']
 mySpacing = expandFocus 10 . spacing 10
 myTall = renamed [Replace "Tall"] . mySpacing $ Tall 1 (3/100) (5/7)
 myCircle = CircleEX 1 (3/100) (5/7) (1 / 11)
-myFont = "xft:IPAGothic"
+myFont = "xft:IPAGothic:size=18"
 myXPConfig = def
   { searchPredicate = isInfixOf
   , font = myFont
