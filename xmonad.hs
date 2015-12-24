@@ -19,13 +19,12 @@ import XMonad.Util.List
 import XMonad.Util.Misc
 import XMonad.Actions.Transset
 import XMonad.Layout.CircleEX
-import XMonad.Layout.ExpandFocus
 
 myConfig = def
 myMask = modMask myConfig
 numWorkspaces = 64
 myWorkspaces =  take numWorkspaces $ enumWords ['a'..'z']
-mySpacing = expandFocus 10 . spacing 10
+mySpacing = spacing 5
 myTall = renamed [Replace "Tall"] . mySpacing $ Tall 1 (3/100) (5/7)
 myCircle = CircleEX 1 (3/100) (5/7) (1 / 11)
 myFont = "xft:IPAGothic:size=12"
