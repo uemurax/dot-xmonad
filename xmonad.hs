@@ -61,6 +61,9 @@ main = do
     { terminal = "x-terminal-emulator"
     , borderWidth = 0
     , workspaces = myWorkspaces
+    , manageHook = composeAll
+      [
+      ]
     , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
     , startupHook = spawn $ "feh --bg-scale ~/Pictures/desktop-background"
     , focusFollowsMouse = False
