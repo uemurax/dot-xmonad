@@ -102,6 +102,7 @@ main = do
     [ ("M-a " ++ key, spawn command)
     | (key, command) <- [ ("e", "emacsclient -c")
         , ("w", "x-www-browser")
+        , ("m", "x-terminal-emulator -e ncmpcpp")
         ]
     ] ++
     [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
