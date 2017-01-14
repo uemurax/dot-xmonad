@@ -1,34 +1,47 @@
-import XMonad hiding ( (|||) )
-import qualified XMonad.StackSet as W
-import XMonad.Layout.LayoutCombinators
-import XMonad.Layout.Spacing
-import XMonad.Layout.Renamed
-import XMonad.Prompt
-import XMonad.Prompt.Window
-import XMonad.Prompt.Workspace
-import XMonad.Util.Run(spawnPipe)
-import XMonad.Util.EZConfig(additionalKeysP)
-import XMonad.Actions.CycleWS
+-- System libraries
 import System.IO
 import Data.List
 import Data.Default
 import qualified Data.Map as M
-import Control.Arrow (first)
-import XMonad.Prompt.Hints
-import XMonad.Util.List
-import XMonad.Util.Misc
-import XMonad.Actions.Transset
-import XMonad.Layout.CircleEX
+import Control.Arrow ( first )
 
+-- XMonad libraries
+import XMonad hiding ( (|||) )
+import qualified XMonad.StackSet as W
+import XMonad.Layout.LayoutCombinators ( (|||)
+                                       , JumpToLayout (JumpToLayout) )
+import XMonad.Layout.Spacing ( spacing )
+import XMonad.Layout.Renamed ( renamed
+                             , Rename (..) )
+import XMonad.Prompt ( XPConfig (..)
+                     , Direction1D (Prev)
+                     , emacsLikeXPKeymap
+                     , deleteString
+                     , killBefore
+                     , killWord )
+import XMonad.Util.Run( spawnPipe )
+import XMonad.Util.EZConfig( additionalKeysP )
+import XMonad.Actions.CycleWS ( nextWS
+                              , prevWS
+                              , shiftToNext
+                              , shiftToPrev )
+
+-- User libraries
+import XMonad.Prompt.Hints ( HintConfig (..)
+                           , HintPrompt (..)
+                           , hintPrompt )
+import XMonad.Util.List ( enumWords )
+import XMonad.Util.Misc ( maximizeWindow )
+import XMonad.Actions.Transset ( Transset (..)
+                               , runTransset )
+import XMonad.Layout.CircleEX ( CircleEX (..) )
+
+-- Main configuration
 myConfig = def
-myMask = modMask myConfig
-numWorkspaces = 64
-myWorkspaces =  take numWorkspaces $ enumWords ['a'..'z']
-mySpacing = spacing 5
-myTall = renamed [Replace "Tall"] . mySpacing $ Tall 1 (3/100) (5/7)
-myCircle = CircleEX 1 (3/100) (5/7) (1 / 11)
-myFont = "xft:IPAGothic:size=12"
-myHintFont = "xft:IPAGothic:size=18"
+myTall = renamed [Replace "Tall"] . spacing 5 $ Tall 1 (3/100) (4/7)
+myCircle = CircleEX 1 (3/100) (4/7) (1 / 11)
+myFont = "xft:monospace:size=12"
+myHintFont = "xft:monospace:size=16"
 myXPConfig = def
   { searchPredicate = isInfixOf
   , font = myFont
@@ -60,7 +73,7 @@ main = do
   xmonad $ myConfig
     { terminal = "urxvtc -e tmux a"
     , borderWidth = 0
-    , workspaces = myWorkspaces
+    , workspaces = take 64 $ enumWords ['a'..'z']
     , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
     , focusFollowsMouse = False
     , clickJustFocuses = True
