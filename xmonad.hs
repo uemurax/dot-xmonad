@@ -34,6 +34,8 @@ import XMonad.Util.List ( enumWords )
 import XMonad.Util.Misc ( maximizeWindow )
 import XMonad.Actions.Transset ( Transset (..)
                                , runTransset )
+import XMonad.Actions.Xdotool ( Xdotool (..)
+                              , runXdotool )
 import XMonad.Layout.CircleEX ( CircleEX (..) )
 
 -- Main configuration
@@ -101,5 +103,20 @@ main = do
     ] ++
     [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
     | (key, t) <- [("S-.", Inc), (">", Inc), ("S-,", Dec), ("<", Dec), ("S-o", Toggle)]
+    ] ++
+    [ ("M4-" ++ key, runXdotool t)
+    | (key, t) <- [ ("h", MousemoveRelative (-10) 0)
+                  , ("j", MousemoveRelative 0 10)
+                  , ("k", MousemoveRelative 0 (-10))
+                  , ("l", MousemoveRelative 10 0)
+                  , ("m", Click 1)
+                  , ("w", Click 1)
+                  , ("e", Click 2)
+                  , ("r", Click 3)
+                  , ("n", Click 5)
+                  , ("p", Click 4)
+                  , ("d", Mousedown 1)
+                  , ("u", Mouseup 1)
+                  ]
     ]
     )
