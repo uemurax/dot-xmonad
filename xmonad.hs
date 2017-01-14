@@ -58,39 +58,19 @@ myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
 
 main = do
   xmonad $ myConfig
-    { terminal = "x-terminal-emulator"
+    { terminal = "urxvtc -e tmux a"
     , borderWidth = 0
     , workspaces = myWorkspaces
-    , manageHook = composeAll
-      [
-      ]
     , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
-    , startupHook = spawn $ "feh --bg-scale ~/Pictures/desktop-background"
     , focusFollowsMouse = False
     , clickJustFocuses = True
     } `additionalKeysP` (
-    [ ("M-S-z" , spawn "xscreensaver-command -lock")
-    ] ++
-    [ ("M-u " ++ key, workspacePrompt myXPConfig action)
-    | (key, action) <- [ ("g", windows . W.greedyView)
-                       , ("b", windows . W.shift)
-                       , ("f", \s -> hintPrompt (BringToWS s) myHConfig myXPConfig)
-                       ]
+    [ ("M-z" , spawn "slock")
     ] ++
     [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
       | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "CircleEX"), ("S-c", "Mirror CircleEX")]
     ] ++
-    [ ("M-: " ++ key, action)
-    | (key, action) <- [("g", windowPromptGoto myXPConfig), ("b", windowPromptBring myXPConfig)]
-    ] ++
     [ ("M-f", myHintPrompt Focus) ] ++
-    [ ("M-; " ++ key, myHintPrompt action)
-    | (key, action) <- [ ("f", Focus), ("m", BringToMaster)
-        , ("c", Close), ("s", Swap)
-        , ("t", Sink), ("S-t", Float), ("S-m", Maximize)
-        , ("@", ScreenShot $ \w -> return $ "~/screenshot-" ++ show w ++ ".png")
-        ]
-    ] ++
     [ ("M-n", nextWS), ("M-p", prevWS)
     , ("M-S-n", shiftToNext), ("M-S-p", shiftToPrev)
     ] ++
@@ -101,12 +81,12 @@ main = do
     ] ++
     [ ("M-a " ++ key, spawn command)
     | (key, command) <- [ ("e", "emacsclient -c")
-        , ("w", "x-www-browser")
-        , ("m", "x-terminal-emulator -e ncmpcpp")
-        ]
+                        , ("t", "urxvtc -e tmux a")
+                        , ("w", "firefox")
+                        , ("m", "urxvtc -e ncmpcpp")
+                        ]
     ] ++
     [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
     | (key, t) <- [("S-.", Inc), (">", Inc), ("S-,", Dec), ("<", Dec), ("S-o", Toggle)]
     ]
     )
-
