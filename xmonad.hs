@@ -91,7 +91,7 @@ main = do
     , focusFollowsMouse = False
     , clickJustFocuses = True
     , startupHook = do
-        setDefaultKeyRemap myKeyRemap [emptyKeyRemap, myKeyRemap]
+        setDefaultKeyRemap emptyKeyRemap [emptyKeyRemap, myKeyRemap]
     } `additionalKeysP` (
     [ ("M-z" , spawn "slock")
     ] ++
