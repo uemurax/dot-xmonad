@@ -20,7 +20,7 @@ to focus a window.
 Try `M-f`.
 
 (Optional) Dependencies
-------------
+-----------------------
 
 *   `slock`
 :   to lock screen.
@@ -29,3 +29,10 @@ Try `M-f`.
     Add `xcompmgr &` in your `~/.xinitrc`.
 *   `imagemagick`
 :   to take a screenshot
+
+Copyright and License
+---------------------
+
+Copyright (c) 2015 - 2017 Taichi Uemura <t.uemura00@gmail.com>
+
+License: MIT
