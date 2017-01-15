@@ -28,7 +28,9 @@ import XMonad.Actions.CycleWS ( nextWS
                               , shiftToPrev )
 import XMonad.Actions.KeyRemap ( KeymapTable (..)
                                , buildKeyRemapBindings
-                               , setDefaultKeyRemap )
+                               , setDefaultKeyRemap
+                               , setKeyRemap
+                               , emptyKeyRemap )
 
 -- User libraries
 import XMonad.Prompt.Hints ( HintConfig (..)
@@ -89,7 +91,7 @@ main = do
     , focusFollowsMouse = False
     , clickJustFocuses = True
     , startupHook = do
-        setDefaultKeyRemap myKeyRemap []
+        setDefaultKeyRemap myKeyRemap [emptyKeyRemap, myKeyRemap]
     } `additionalKeysP` (
     [ ("M-z" , spawn "slock")
     ] ++
@@ -129,6 +131,9 @@ main = do
                   , ("d", Mousedown 1)
                   , ("u", Mouseup 1)
                   ]
+    ] ++
+    [ ("M-i " ++ key, setKeyRemap t)
+    | (key, t) <- [("i", emptyKeyRemap), ("o", myKeyRemap)]
     ]
     ) `additionalKeys` buildKeyRemapBindings
     [ myKeyRemap
