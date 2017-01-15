@@ -110,7 +110,7 @@ main = do
     [ ("M-a " ++ key, spawn command)
     | (key, command) <- [ ("e", "emacsclient -c")
                         , ("t", "urxvtc -e tmux a")
-                        , ("w", "firefox")
+                        , ("w", "conkeror")
                         , ("m", "urxvtc -e ncmpcpp")
                         ]
     ] ++
