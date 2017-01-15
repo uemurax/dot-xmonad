@@ -20,11 +20,15 @@ import XMonad.Prompt ( XPConfig (..)
                      , killBefore
                      , killWord )
 import XMonad.Util.Run( spawnPipe )
-import XMonad.Util.EZConfig( additionalKeysP )
+import XMonad.Util.EZConfig( additionalKeysP
+                           , additionalKeys )
 import XMonad.Actions.CycleWS ( nextWS
                               , prevWS
                               , shiftToNext
                               , shiftToPrev )
+import XMonad.Actions.KeyRemap ( KeymapTable (..)
+                               , buildKeyRemapBindings
+                               , setDefaultKeyRemap )
 
 -- User libraries
 import XMonad.Prompt.Hints ( HintConfig (..)
@@ -71,6 +75,11 @@ myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
                       , searchPredicate = isPrefixOf
                       }
 
+myKeyRemap = KeymapTable [ ((controlMask, xK_i), (0, xK_Tab))
+                         , ((controlMask, xK_m), (0, xK_Return))
+                         , ((controlMask, xK_bracketleft), (0, xK_Escape))
+                         ]
+
 main = do
   xmonad $ myConfig
     { terminal = "urxvtc -e tmux a"
@@ -79,6 +88,8 @@ main = do
     , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
     , focusFollowsMouse = False
     , clickJustFocuses = True
+    , startupHook = do
+        setDefaultKeyRemap myKeyRemap []
     } `additionalKeysP` (
     [ ("M-z" , spawn "slock")
     ] ++
@@ -119,4 +130,6 @@ main = do
                   , ("u", Mouseup 1)
                   ]
     ]
-    )
+    ) `additionalKeys` buildKeyRemapBindings
+    [ myKeyRemap
+    ]
