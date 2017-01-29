@@ -46,7 +46,7 @@ import XMonad.Layout.CircleEX ( CircleEX (..) )
 
 -- Main configuration
 myConfig = def
-myTall = renamed [Replace "Tall"] . spacing 5 $ Tall 1 (3/100) (4/7)
+myTall = renamed [Replace "Tall"] . spacing 2 $ Tall 1 (3/100) (4/7)
 myCircle = CircleEX 1 (3/100) (4/7) (1 / 11)
 myFont = "xft:monospace:size=12"
 myHintFont = "xft:monospace:size=16"
