@@ -1,6 +1,7 @@
 *.errors
 *.o
 *.hi
+xmonad.hs
 xmonad-*-linux
 history
 *.swp

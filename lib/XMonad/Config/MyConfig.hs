@@ -1,3 +1,7 @@
+module XMonad.Config.MyConfig (
+  mkMyConfig
+  ) where
+
 -- System libraries
 import System.IO
 import Data.List
@@ -31,8 +35,6 @@ import XMonad.Actions.KeyRemap ( KeymapTable (..)
                                , setDefaultKeyRemap
                                , setKeyRemap
                                , emptyKeyRemap )
-import XMonad.Config.Mate ( mateConfig
-                          , desktopLayoutModifiers )
 
 -- User libraries
 import XMonad.Prompt.Hints ( HintConfig (..)
@@ -47,7 +49,6 @@ import XMonad.Actions.Xdotool ( Xdotool (..)
 import XMonad.Layout.CircleEX ( CircleEX (..) )
 
 -- Main configuration
-myConfig = mateConfig
 myTall = renamed [Replace "Tall"] . spacing 2 $ Tall 1 (3/100) (4/7)
 myCircle = CircleEX 1 (3/100) (4/7) (1 / 11)
 myFont = "xft:monospace:size=12"
@@ -84,59 +85,56 @@ myKeyRemap = KeymapTable [ ((controlMask, xK_i), (0, xK_Tab))
                          , ((controlMask, xK_bracketleft), (0, xK_Escape))
                          ]
 
-main = do
-  xmonad $ myConfig
-    { terminal = "urxvtc -e tmux a"
-    , borderWidth = 0
-    , workspaces = take 64 $ enumWords ['a'..'z']
-    , layoutHook = desktopLayoutModifiers (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
-    , focusFollowsMouse = False
-    , clickJustFocuses = True
-    , startupHook = do
-        setDefaultKeyRemap emptyKeyRemap [emptyKeyRemap, myKeyRemap]
-    } `additionalKeysP` (
-    [ ("M-z" , spawn "mate-screensaver-command -l")
-    ] ++
-    [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
-      | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "CircleEX"), ("S-c", "Mirror CircleEX")]
-    ] ++
-    [ ("M-f", myHintPrompt Focus) ] ++
-    [ ("M-n", nextWS), ("M-p", prevWS)
-    , ("M-S-n", shiftToNext), ("M-S-p", shiftToPrev)
-    ] ++
-    [ ("M-S-t", withFocused maximizeWindow)
-    , ("M-t", withFocused $ windows . W.sink)
-    ] ++
-    [ ("M-@", spawn "import -window root screenshot.jpg")
-    ] ++
-    [ ("M-a " ++ key, spawn command)
-    | (key, command) <- [ ("e", "emacsclient -c")
-                        , ("t", "urxvtc -e tmux a")
-                        , ("w", "x-www-browser")
-                        , ("m", "urxvtc -e ncmpcpp")
-                        ]
-    ] ++
-    [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
-    | (key, t) <- [("S-.", Inc), (">", Inc), ("S-,", Dec), ("<", Dec), ("S-o", Toggle)]
-    ] ++
-    [ ("M4-" ++ key, runXdotool t)
-    | (key, t) <- [ ("h", MousemoveRelative (-10) 0)
-                  , ("j", MousemoveRelative 0 10)
-                  , ("k", MousemoveRelative 0 (-10))
-                  , ("l", MousemoveRelative 10 0)
-                  , ("m", Click 1)
-                  , ("w", Click 1)
-                  , ("e", Click 2)
-                  , ("r", Click 3)
-                  , ("n", Click 5)
-                  , ("p", Click 4)
-                  , ("d", Mousedown 1)
-                  , ("u", Mouseup 1)
-                  ]
-    ] ++
-    [ ("M-i " ++ key, setKeyRemap t)
-    | (key, t) <- [("i", emptyKeyRemap), ("o", myKeyRemap)]
-    ]
-    ) `additionalKeys` buildKeyRemapBindings
-    [ myKeyRemap
-    ]
+mkMyConfig config =
+  config { terminal = "urxvtc -e tmux a"
+         , borderWidth = 0
+         , workspaces = take 64 $ enumWords ['a'..'z']
+         , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
+         , focusFollowsMouse = False
+         , clickJustFocuses = True
+         , startupHook = do
+             setDefaultKeyRemap emptyKeyRemap [emptyKeyRemap, myKeyRemap]
+         } `additionalKeysP` (
+  [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
+  | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "CircleEX"), ("S-c", "Mirror CircleEX")]
+  ] ++
+  [ ("M-f", myHintPrompt Focus) ] ++
+  [ ("M-n", nextWS), ("M-p", prevWS)
+  , ("M-S-n", shiftToNext), ("M-S-p", shiftToPrev)
+  ] ++
+  [ ("M-S-t", withFocused maximizeWindow)
+  , ("M-t", withFocused $ windows . W.sink)
+  ] ++
+  [ ("M-@", spawn "import -window root screenshot.jpg")
+  ] ++
+  [ ("M-a " ++ key, spawn command)
+  | (key, command) <- [ ("e", "emacsclient -c")
+                      , ("t", "urxvtc -e tmux a")
+                      , ("w", "x-www-browser")
+                      , ("m", "urxvtc -e ncmpcpp")
+                      ]
+  ] ++
+  [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
+  | (key, t) <- [("S-.", Inc), (">", Inc), ("S-,", Dec), ("<", Dec), ("S-o", Toggle)]
+  ] ++
+  [ ("M4-" ++ key, runXdotool t)
+  | (key, t) <- [ ("h", MousemoveRelative (-10) 0)
+                , ("j", MousemoveRelative 0 10)
+                , ("k", MousemoveRelative 0 (-10))
+                , ("l", MousemoveRelative 10 0)
+                , ("m", Click 1)
+                , ("w", Click 1)
+                , ("e", Click 2)
+                , ("r", Click 3)
+                , ("n", Click 5)
+                , ("p", Click 4)
+                , ("d", Mousedown 1)
+                , ("u", Mouseup 1)
+                ]
+  ] ++
+  [ ("M-i " ++ key, setKeyRemap t)
+  | (key, t) <- [("i", emptyKeyRemap), ("o", myKeyRemap)]
+  ]
+  ) `additionalKeys` buildKeyRemapBindings
+  [ myKeyRemap
+  ]

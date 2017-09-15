@@ -7,6 +7,16 @@ Install
 -------
 
     $ git clone https://github.com/uemurax/dot-xmonad ~/.xmonad
+
+Put, for example, the following lines in `~/.xmonad/xmonad.hs`.
+
+    import XMonad
+    import XMonad.Config.MyConfig ( mkMyConfig )
+    
+    main = xmonad $ mkMyConfig def
+
+Then execute:
+
     $ xmonad --recompile
 
 Features
@@ -22,8 +32,6 @@ Try `M-f`.
 (Optional) Dependencies
 -----------------------
 
-*   `slock`
-:   to lock screen.
 *   `xcompmgr` and `transset`
 :   to make windows transparent.
     Add `xcompmgr &` in your `~/.xinitrc`.
