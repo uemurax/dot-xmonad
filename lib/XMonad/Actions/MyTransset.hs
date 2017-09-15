@@ -1,4 +1,4 @@
-module XMonad.Actions.Transset
+module XMonad.Actions.MyTransset
        ( Transset (..)
        , runTransset
        ) where

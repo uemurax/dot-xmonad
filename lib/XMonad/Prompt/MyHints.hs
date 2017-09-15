@@ -1,4 +1,4 @@
-module XMonad.Prompt.Hints
+module XMonad.Prompt.MyHints
   ( HintAction (..)
   , HintPrompt (..)
   , HintConfig (..)
@@ -11,12 +11,13 @@ import qualified XMonad.StackSet as W
 import XMonad.Prompt
 import XMonad.Util.Font
 import XMonad.Util.NamedWindows
-import XMonad.Util.Hints
 import XMonad.Util.XUtils
 
 import Data.Default
 import Data.List
 import Data.Char (toUpper)
+
+import XMonad.Util.MyHints
 
 class (XPrompt a) => HintAction a where
   hintAction :: a -> Window -> X ()

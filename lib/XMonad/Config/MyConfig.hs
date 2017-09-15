@@ -37,20 +37,20 @@ import XMonad.Actions.KeyRemap ( KeymapTable (..)
                                , emptyKeyRemap )
 
 -- User libraries
-import XMonad.Prompt.Hints ( HintConfig (..)
-                           , HintPrompt (..)
-                           , hintPrompt )
-import XMonad.Util.List ( enumWords )
-import XMonad.Util.Misc ( maximizeWindow )
-import XMonad.Actions.Transset ( Transset (..)
+import XMonad.Prompt.MyHints ( HintConfig (..)
+                             , HintPrompt (..)
+                             , hintPrompt )
+import XMonad.Util.MyList ( enumWords )
+import XMonad.Util.MyMisc ( maximizeWindow )
+import XMonad.Actions.MyTransset ( Transset (..)
                                , runTransset )
-import XMonad.Actions.Xdotool ( Xdotool (..)
+import XMonad.Actions.MyXdotool ( Xdotool (..)
                               , runXdotool )
-import XMonad.Layout.CircleEX ( CircleEX (..) )
+import XMonad.Layout.MyCircle ( MyCircle (..) )
 
 -- Main configuration
 myTall = renamed [Replace "Tall"] . spacing 2 $ Tall 1 (3/100) (4/7)
-myCircle = CircleEX 1 (3/100) (4/7) (1 / 11)
+myCircle = MyCircle 1 (3/100) (4/7) (1 / 11)
 myFont = "xft:monospace:size=12"
 myHintFont = "xft:monospace:size=16"
 myXPConfig = def
@@ -70,7 +70,7 @@ myHConfig = def
       do l <- withWindowSet $ return . W.layout . W.workspace . W.current
          let s = description l
          if "Full" `isInfixOf` s
-           then return . Just . Layout $ CircleEX 0 (3/100) (4/7) (1/11)
+           then return . Just . Layout $ MyCircle 0 (3/100) (4/7) (1/11)
            else return Nothing
   }
 myTranssetConfig = def
@@ -96,7 +96,7 @@ mkMyConfig config =
              setDefaultKeyRemap emptyKeyRemap [emptyKeyRemap, myKeyRemap]
          } `additionalKeysP` (
   [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
-  | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "CircleEX"), ("S-c", "Mirror CircleEX")]
+  | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "MyCircle"), ("S-c", "Mirror MyCircle")]
   ] ++
   [ ("M-f", myHintPrompt Focus) ] ++
   [ ("M-n", nextWS), ("M-p", prevWS)

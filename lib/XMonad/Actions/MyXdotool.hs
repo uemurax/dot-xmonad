@@ -1,4 +1,4 @@
-module XMonad.Actions.Xdotool
+module XMonad.Actions.MyXdotool
   ( Xdotool (..)
   , runXdotool
   ) where

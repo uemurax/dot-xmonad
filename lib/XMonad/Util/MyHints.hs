@@ -1,10 +1,10 @@
-module XMonad.Util.Hints
+module XMonad.Util.MyHints
   ( windowMap
   ) where
 
 import XMonad
 import qualified XMonad.StackSet as W
-import XMonad.Util.List
+import XMonad.Util.MyList
 
 windowMap' :: W.StackSet i l a s sd -> [String] -> [(String, a)]
 windowMap' stk ss = zip ss $ W.index stk

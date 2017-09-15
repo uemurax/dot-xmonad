@@ -1,4 +1,4 @@
-module XMonad.Util.List
+module XMonad.Util.MyList
   ( enumWords
   ) where
 

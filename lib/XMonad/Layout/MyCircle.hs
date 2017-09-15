@@ -1,7 +1,7 @@
 {-# LANGUAGE FlexibleInstances, MultiParamTypeClasses #-}
 
-module XMonad.Layout.CircleEX (
-  CircleEX (..)
+module XMonad.Layout.MyCircle (
+  MyCircle (..)
   ) where
 
 import Data.List
@@ -10,15 +10,15 @@ import Control.Monad
 import XMonad
 import qualified XMonad.StackSet as W
 
-data CircleEX a = CircleEX {
+data MyCircle a = MyCircle {
   circleNMaster :: !Int,
   circleRatioIncrement :: !Rational,
   circleRatio :: !Rational,
   circleOffset :: !Rational }
                   deriving (Show, Read)
 
-instance LayoutClass CircleEX Window where
-  doLayout (CircleEX nmaster _ frac offset) r s = do
+instance LayoutClass MyCircle Window where
+  doLayout (MyCircle nmaster _ frac offset) r s = do
     layout <- raiseFocus $ zip ws rs
     return (layout, Nothing) where
       ws = W.integrate s
@@ -34,7 +34,7 @@ instance LayoutClass CircleEX Window where
       resize Expand = c { circleRatio = min 1 $ frac + delta }
       incmastern (IncMasterN d) = c { circleNMaster = max 0 (nmaster + d) }
 
-  description _ = "CircleEX"
+  description _ = "MyCircle"
 
 raiseFocus :: [(Window, Rectangle)] -> X [(Window, Rectangle)]
 raiseFocus xs = do

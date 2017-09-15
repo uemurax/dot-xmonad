@@ -1,4 +1,4 @@
-module XMonad.Util.Misc
+module XMonad.Util.MyMisc
   ( maximizeWindow
   ) where
 
