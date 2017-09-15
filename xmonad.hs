@@ -31,6 +31,8 @@ import XMonad.Actions.KeyRemap ( KeymapTable (..)
                                , setDefaultKeyRemap
                                , setKeyRemap
                                , emptyKeyRemap )
+import XMonad.Config.Mate ( mateConfig
+                          , desktopLayoutModifiers )
 
 -- User libraries
 import XMonad.Prompt.Hints ( HintConfig (..)
@@ -45,7 +47,7 @@ import XMonad.Actions.Xdotool ( Xdotool (..)
 import XMonad.Layout.CircleEX ( CircleEX (..) )
 
 -- Main configuration
-myConfig = def
+myConfig = mateConfig
 myTall = renamed [Replace "Tall"] . spacing 2 $ Tall 1 (3/100) (4/7)
 myCircle = CircleEX 1 (3/100) (4/7) (1 / 11)
 myFont = "xft:monospace:size=12"
@@ -87,13 +89,13 @@ main = do
     { terminal = "urxvtc -e tmux a"
     , borderWidth = 0
     , workspaces = take 64 $ enumWords ['a'..'z']
-    , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
+    , layoutHook = desktopLayoutModifiers (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
     , focusFollowsMouse = False
     , clickJustFocuses = True
     , startupHook = do
         setDefaultKeyRemap emptyKeyRemap [emptyKeyRemap, myKeyRemap]
     } `additionalKeysP` (
-    [ ("M-z" , spawn "slock")
+    [ ("M-z" , spawn "mate-screensaver-command -l")
     ] ++
     [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
       | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "CircleEX"), ("S-c", "Mirror CircleEX")]
