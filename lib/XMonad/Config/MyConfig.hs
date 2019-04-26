@@ -14,9 +14,6 @@ import XMonad hiding ( (|||) )
 import qualified XMonad.StackSet as W
 import XMonad.Layout.LayoutCombinators ( (|||)
                                        , JumpToLayout (JumpToLayout) )
-import XMonad.Layout.Spacing ( spacing )
-import XMonad.Layout.Renamed ( renamed
-                             , Rename (..) )
 import XMonad.Prompt ( XPConfig (..)
                      , Direction1D (Prev)
                      , emacsLikeXPKeymap
@@ -49,7 +46,7 @@ import XMonad.Actions.MyXdotool ( Xdotool (..)
 import XMonad.Layout.MyCircle ( MyCircle (..) )
 
 -- Main configuration
-myTall = renamed [Replace "Tall"] . spacing 2 $ Tall 1 (3/100) (4/7)
+myTall = Tall 1 (3/100) (4/7)
 myCircle = MyCircle 1 (3/100) (4/7) (1 / 11)
 myFont = "xft:monospace:size=12"
 myHintFont = "xft:monospace:size=16"
