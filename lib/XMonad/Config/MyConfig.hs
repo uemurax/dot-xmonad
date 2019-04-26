@@ -83,8 +83,7 @@ myKeyRemap = KeymapTable [ ((controlMask, xK_i), (0, xK_Tab))
                          ]
 
 mkMyConfig config =
-  config { terminal = "urxvtc -e tmux a"
-         , borderWidth = 0
+  config { borderWidth = 0
          , workspaces = take 64 $ enumWords ['a'..'z']
          , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
          , focusFollowsMouse = False
@@ -103,13 +102,6 @@ mkMyConfig config =
   , ("M-t", withFocused $ windows . W.sink)
   ] ++
   [ ("M-@", spawn "import -window root screenshot.jpg")
-  ] ++
-  [ ("M-a " ++ key, spawn command)
-  | (key, command) <- [ ("e", "emacsclient -c")
-                      , ("t", "urxvtc -e tmux a")
-                      , ("w", "x-www-browser")
-                      , ("m", "urxvtc -e ncmpcpp")
-                      ]
   ] ++
   [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
   | (key, t) <- [("S-.", Inc), (">", Inc), ("S-,", Dec), ("<", Dec), ("S-o", Toggle)]
