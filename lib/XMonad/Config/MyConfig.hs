@@ -1,5 +1,5 @@
 module XMonad.Config.MyConfig (
-  mkMyConfig
+  myConfig
   ) where
 
 -- System libraries
@@ -27,11 +27,6 @@ import XMonad.Actions.CycleWS ( nextWS
                               , prevWS
                               , shiftToNext
                               , shiftToPrev )
-import XMonad.Actions.KeyRemap ( KeymapTable (..)
-                               , buildKeyRemapBindings
-                               , setDefaultKeyRemap
-                               , setKeyRemap
-                               , emptyKeyRemap )
 
 -- User libraries
 import XMonad.Prompt.MyHints ( HintConfig (..)
@@ -77,20 +72,15 @@ myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
                       , searchPredicate = isPrefixOf
                       }
 
-myKeyRemap = KeymapTable [ ((controlMask, xK_i), (0, xK_Tab))
-                         , ((controlMask, xK_m), (0, xK_Return))
-                         , ((controlMask, xK_bracketleft), (0, xK_Escape))
-                         ]
+myConfig = myConfigBase
 
-mkMyConfig config =
-  config { borderWidth = 0
-         , workspaces = take 64 $ enumWords ['a'..'z']
-         , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
-         , focusFollowsMouse = False
-         , clickJustFocuses = True
-         , startupHook = do
-             setDefaultKeyRemap emptyKeyRemap [emptyKeyRemap, myKeyRemap]
-         } `additionalKeysP` (
+myConfigBase =
+  def {  borderWidth = 0
+      , workspaces = take 64 $ enumWords ['a'..'z']
+      , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
+      , focusFollowsMouse = False
+      , clickJustFocuses = True
+      } `additionalKeysP` (
   [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
   | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "MyCircle"), ("S-c", "Mirror MyCircle")]
   ] ++
@@ -120,10 +110,5 @@ mkMyConfig config =
                 , ("d", Mousedown 1)
                 , ("u", Mouseup 1)
                 ]
-  ] ++
-  [ ("M-i " ++ key, setKeyRemap t)
-  | (key, t) <- [("i", emptyKeyRemap), ("o", myKeyRemap)]
   ]
-  ) `additionalKeys` buildKeyRemapBindings
-  [ myKeyRemap
-  ]
+  )
