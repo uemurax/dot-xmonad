@@ -1,3 +1,5 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module XMonad.Config.MyConfig (
   myConfig
   ) where
@@ -27,6 +29,10 @@ import XMonad.Actions.CycleWS ( nextWS
                               , prevWS
                               , shiftToNext
                               , shiftToPrev )
+import XMonad.Layout.Fullscreen ( fullscreenFocus
+                                , fullscreenManageHook
+                                , fullscreenEventHook
+                                )
 
 -- User libraries
 import XMonad.Prompt.MyHints ( HintConfig (..)
@@ -72,7 +78,13 @@ myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
                       , searchPredicate = isPrefixOf
                       }
 
-myConfig = myConfigBase
+myConfig = myFullscreen $ myConfigBase
+
+myFullscreen cfg =
+  cfg { handleEventHook = handleEventHook cfg <+> fullscreenEventHook
+      , manageHook =  manageHook cfg <+> fullscreenManageHook
+      , layoutHook = fullscreenFocus  $ layoutHook cfg
+      }
 
 myConfigBase =
   def {  borderWidth = 0
