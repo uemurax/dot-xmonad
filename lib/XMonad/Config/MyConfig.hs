@@ -33,6 +33,9 @@ import XMonad.Layout.Fullscreen ( fullscreenFocus
                                 , fullscreenManageHook
                                 , fullscreenEventHook
                                 )
+import XMonad.Hooks.ManageDocks ( docks
+                                , avoidStruts
+                                )
 
 -- User libraries
 import XMonad.Prompt.MyHints ( HintConfig (..)
@@ -78,13 +81,15 @@ myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
                       , searchPredicate = isPrefixOf
                       }
 
-myConfig = myFullscreen $ myConfigBase
+myConfig = myFullscreen . myDocks $ myConfigBase
 
 myFullscreen cfg =
   cfg { handleEventHook = handleEventHook cfg <+> fullscreenEventHook
       , manageHook =  manageHook cfg <+> fullscreenManageHook
       , layoutHook = fullscreenFocus  $ layoutHook cfg
       }
+
+myDocks cfg = docks cfg { layoutHook = avoidStruts $ layoutHook cfg }
 
 myConfigBase =
   def {  borderWidth = 0
