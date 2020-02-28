@@ -21,14 +21,15 @@ import XMonad.Prompt ( XPConfig (..)
                      , emacsLikeXPKeymap
                      , deleteString
                      , killBefore
-                     , killWord )
-import XMonad.Util.Run( spawnPipe )
+                     , killWord
+                     )
 import XMonad.Util.EZConfig( additionalKeysP
-                           , additionalKeys )
+                           )
 import XMonad.Actions.CycleWS ( nextWS
                               , prevWS
                               , shiftToNext
-                              , shiftToPrev )
+                              , shiftToPrev
+                              )
 import XMonad.Layout.Fullscreen ( fullscreenFocus
                                 , fullscreenManageHook
                                 , fullscreenEventHook
@@ -42,11 +43,6 @@ import XMonad.Prompt.MyHints ( HintConfig (..)
                              , HintPrompt (..)
                              , hintPrompt )
 import XMonad.Util.MyList ( enumWords )
-import XMonad.Util.MyMisc ( maximizeWindow )
-import XMonad.Actions.MyTransset ( Transset (..)
-                               , runTransset )
-import XMonad.Actions.MyXdotool ( Xdotool (..)
-                              , runXdotool )
 import XMonad.Layout.MyCircle ( MyCircle (..) )
 
 -- Main configuration
@@ -74,7 +70,6 @@ myHConfig = def
            then return . Just . Layout $ MyCircle 0 (3/100) (4/7) (1/11)
            else return Nothing
   }
-myTranssetConfig = def
 
 myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
                       { autoComplete = Just 0
@@ -92,7 +87,7 @@ myFullscreen cfg =
 myDocks cfg = docks cfg { layoutHook = avoidStruts $ layoutHook cfg }
 
 myConfigBase =
-  def {  borderWidth = 0
+  def { borderWidth = 0
       , workspaces = take 64 $ enumWords ['a'..'z']
       , layoutHook = (myTall ||| Mirror myTall ||| Full ||| myCircle ||| Mirror myCircle)
       , focusFollowsMouse = False
@@ -105,27 +100,6 @@ myConfigBase =
   [ ("M-n", nextWS), ("M-p", prevWS)
   , ("M-S-n", shiftToNext), ("M-S-p", shiftToPrev)
   ] ++
-  [ ("M-S-t", withFocused maximizeWindow)
-  , ("M-t", withFocused $ windows . W.sink)
-  ] ++
-  [ ("M-@", spawn "import -window root screenshot.jpg")
-  ] ++
-  [ ("M-" ++ key, withFocused $ runTransset myTranssetConfig t)
-  | (key, t) <- [("S-.", Inc), (">", Inc), ("S-,", Dec), ("<", Dec), ("S-o", Toggle)]
-  ] ++
-  [ ("M4-" ++ key, runXdotool t)
-  | (key, t) <- [ ("h", MousemoveRelative (-10) 0)
-                , ("j", MousemoveRelative 0 10)
-                , ("k", MousemoveRelative 0 (-10))
-                , ("l", MousemoveRelative 10 0)
-                , ("m", Click 1)
-                , ("w", Click 1)
-                , ("e", Click 2)
-                , ("r", Click 3)
-                , ("n", Click 5)
-                , ("p", Click 4)
-                , ("d", Mousedown 1)
-                , ("u", Mouseup 1)
-                ]
+  [ ("M-t", withFocused $ windows . W.sink)
   ]
   )
