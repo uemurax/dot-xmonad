@@ -94,7 +94,7 @@ myDocks cfg = docks cfg { layoutHook = avoidStruts $ layoutHook cfg }
 myConfigBase =
   def {  borderWidth = 0
       , workspaces = take 64 $ enumWords ['a'..'z']
-      , layoutHook = (Mirror myTall ||| myTall ||| Full ||| myCircle ||| Mirror myCircle)
+      , layoutHook = (myTall ||| Mirror myTall ||| Full ||| myCircle ||| Mirror myCircle)
       , focusFollowsMouse = False
       , clickJustFocuses = True
       } `additionalKeysP` (
