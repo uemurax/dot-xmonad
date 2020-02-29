@@ -30,16 +30,6 @@ import XMonad.Actions.CycleWS ( nextWS
                               , shiftToNext
                               , shiftToPrev
                               )
-import XMonad.Layout.Fullscreen ( fullscreenFocus
-                                , fullscreenManageHook
-                                , fullscreenEventHook
-                                )
-import XMonad.Hooks.ManageDocks ( docks
-                                , avoidStruts
-                                )
-import XMonad.Layout.Maximize ( maximize
-                              , maximizeRestore
-                              )
 
 -- User libraries
 import XMonad.Prompt.MyHints ( HintConfig (..)
@@ -47,8 +37,13 @@ import XMonad.Prompt.MyHints ( HintConfig (..)
                              , hintPrompt )
 import XMonad.Util.MyList ( enumWords )
 import XMonad.Layout.MyCircle ( MyCircle (..) )
+import XMonad.Config.MyFullscreen ( myFullscreen )
+import XMonad.Config.MyDocks ( myDocks )
+import XMonad.Config.MyMaximize ( myMaximize )
 
 -- Main configuration
+myConfig = myFullscreen . myDocks . myMaximize $ myConfigBase
+
 myTall = Tall 1 (3/100) (4/7)
 myCircle = MyCircle 1 (3/100) (4/7) (1 / 11)
 myFont = "xft:monospace:size=12"
@@ -73,22 +68,6 @@ myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
                       { autoComplete = Just 0
                       , searchPredicate = isPrefixOf
                       }
-
-myConfig = myFullscreen . myDocks . myMaximize $ myConfigBase
-
-myFullscreen cfg =
-  cfg { handleEventHook = handleEventHook cfg <+> fullscreenEventHook
-      , manageHook =  manageHook cfg <+> fullscreenManageHook
-      , layoutHook = fullscreenFocus  $ layoutHook cfg
-      }
-
-myDocks cfg = docks cfg { layoutHook = avoidStruts $ layoutHook cfg }
-
-myMaximize cfg =
-  cfg { layoutHook = maximize $ layoutHook cfg
-      } `additionalKeysP`
-  [ ("M-z", withFocused $ sendMessage . maximizeRestore)
-  ]
 
 myConfigBase =
   def { borderWidth = 0
