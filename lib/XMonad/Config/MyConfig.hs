@@ -12,10 +12,8 @@ import qualified Data.Map as M
 import Control.Arrow ( first )
 
 -- XMonad libraries
-import XMonad hiding ( (|||) )
+import XMonad
 import qualified XMonad.StackSet as W
-import XMonad.Layout.LayoutCombinators ( (|||)
-                                       , JumpToLayout (JumpToLayout) )
 import XMonad.Prompt ( XPConfig (..)
                      , Direction1D (Prev)
                      , emacsLikeXPKeymap
@@ -40,12 +38,11 @@ import XMonad.Layout.MyCircle ( MyCircle (..) )
 import XMonad.Config.MyFullscreen ( myFullscreen )
 import XMonad.Config.MyDocks ( myDocks )
 import XMonad.Config.MyMaximize ( myMaximize )
+import XMonad.Config.MyLayoutBase ( myLayoutBase )
 
 -- Main configuration
-myConfig = myFullscreen . myDocks . myMaximize $ myConfigBase
+myConfig = myFullscreen . myDocks . myMaximize . myLayoutBase $ myConfigBase
 
-myTall = Tall 1 (3/100) (4/7)
-myCircle = MyCircle 1 (3/100) (4/7) (1 / 11)
 myFont = "xft:monospace:size=12"
 myHintFont = "xft:monospace:size=16"
 myXPConfig = def
@@ -72,17 +69,13 @@ myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
 myConfigBase =
   def { borderWidth = 0
       , workspaces = take 64 $ enumWords ['a'..'z']
-      , layoutHook = (myTall ||| Mirror myTall ||| Full ||| myCircle ||| Mirror myCircle)
       , focusFollowsMouse = False
       , clickJustFocuses = True
-      } `additionalKeysP` (
-  [ ("M-o " ++ key, sendMessage $ JumpToLayout layout)
-  | (key, layout) <- [("f", "Full"), ("t", "Tall"), ("S-t", "Mirror Tall"), ("c", "MyCircle"), ("S-c", "Mirror MyCircle")]
-  ] ++
-  [ ("M-f", myHintPrompt Focus) ] ++
-  [ ("M-n", nextWS), ("M-p", prevWS)
-  , ("M-S-n", shiftToNext), ("M-S-p", shiftToPrev)
-  ] ++
-  [ ("M-t", withFocused $ windows . W.sink)
+      } `additionalKeysP`
+  [ ("M-f", myHintPrompt Focus)
+  , ("M-n", nextWS)
+  , ("M-p", prevWS)
+  , ("M-S-n", shiftToNext)
+  , ("M-S-p", shiftToPrev)
+  , ("M-t", withFocused $ windows . W.sink)
   ]
-  )
