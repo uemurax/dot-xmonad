@@ -11,9 +11,9 @@ Install
 Put, for example, the following lines in `~/.xmonad/xmonad.hs`.
 
     import XMonad
-    import XMonad.Config.MyConfig ( mkMyConfig )
+    import XMonad.Config.MyConfig
     
-    main = xmonad $ mkMyConfig def
+    main = xmonad myConfig
 
 Then execute:
 
@@ -29,18 +29,9 @@ inspired by [Vimperator](http://www.vimperator.org/),
 to focus a window.
 Try `M-f`.
 
-(Optional) Dependencies
------------------------
-
-*   `xcompmgr` and `transset`
-:   to make windows transparent.
-    Add `xcompmgr &` in your `~/.xinitrc`.
-*   `imagemagick`
-:   to take a screenshot
-
 Copyright and License
 ---------------------
 
-Copyright (c) 2015 - 2017 Taichi Uemura <t.uemura00@gmail.com>
+Copyright (c) 2015 - 2020 Taichi Uemura <t.uemura00@gmail.com>
 
 License: MIT
