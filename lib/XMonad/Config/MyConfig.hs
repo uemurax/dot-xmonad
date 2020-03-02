@@ -67,8 +67,7 @@ myHintPrompt action = hintPrompt action myHConfig $ myXPConfig
                       }
 
 myConfigBase =
-  def { borderWidth = 0
-      , workspaces = take 64 $ enumWords ['a'..'z']
+  def { workspaces = take 64 $ enumWords ['a'..'z']
       , focusFollowsMouse = False
       , clickJustFocuses = True
       } `additionalKeysP`

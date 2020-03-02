@@ -6,6 +6,7 @@ import XMonad hiding ( (|||) )
 import XMonad.Layout.LayoutCombinators ( (|||)
                                        , JumpToLayout (JumpToLayout) )
 import XMonad.Util.EZConfig
+import XMonad.Layout.NoBorders ( noBorders )
 import XMonad.Layout.MyCircle ( MyCircle (..) )
 
 myLayoutBase cfg =
@@ -13,7 +14,7 @@ myLayoutBase cfg =
       } `additionalKeysP`
   myLayoutKeysP
 
-myLayout = myTall ||| Mirror myTall ||| Full ||| myCircle ||| Mirror myCircle
+myLayout = myTall ||| Mirror myTall ||| noBorders Full ||| myCircle ||| Mirror myCircle
 
 myTall = Tall 1 (3/100) (4/7)
 myCircle = MyCircle 1 (3/100) (4/7) (1/11)
